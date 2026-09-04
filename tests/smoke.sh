@@ -32,6 +32,9 @@ tmpdir="$(mktemp -d)"
   test -f sample/.env.example
   test -f sample/docker-compose.yml
   ! grep -R "{{PROJECT_NAME}}" sample
+  "$ROOT_DIR/install.sh" --new custom-name --stack python --yes >/tmp/ai-dev-install-new.out
+  test -f custom-name/README.md
+  grep -q "custom-name" custom-name/README.md
 )
 
 printf 'smoke tests passed\n'

@@ -14,4 +14,9 @@ if [[ ! -x "$ROOT_DIR/bin/ai-dev" ]]; then
   exit 2
 fi
 
+if [[ "${1:-}" == "--new" ]]; then
+  shift
+  exec "$ROOT_DIR/bin/ai-dev" new "$@"
+fi
+
 exec "$ROOT_DIR/bin/ai-dev" install "$@"
