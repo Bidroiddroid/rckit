@@ -7,12 +7,7 @@ It is designed for Ubuntu, Debian, and WSL2 Ubuntu first. The first implementati
 ## Quick Start
 
 ```bash
-sudo apt-get update
-sudo apt-get install -y git
-git clone https://github.com/Bidroiddroid/rckit.git ai-dev-bootstrap
-cd ai-dev-bootstrap
-chmod +x install.sh bin/ai-dev
-./install.sh --profile developer --dry-run
+bash -c "$(wget -qO- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh)" -- --profile developer --dry-run
 ```
 
 Use `--dry-run` first to review what would happen. Remove it only after reviewing the plan.
@@ -20,44 +15,40 @@ Use `--dry-run` first to review what would happen. Remove it only after reviewin
 The repository folder is only the bootstrap tool. Your project name is chosen separately when you create a project:
 
 ```bash
-./install.sh --new meu-projeto --stack node
+bash -c "$(wget -qO- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh)" -- --new meu-projeto --stack node
 ```
+
+The one-line installer stores the bootstrap repository at `~/.local/share/rckit` by default. Change that location with `RCKIT_INSTALL_DIR`.
 
 ## Install From GitHub
 
 On any supported machine:
 
 ```bash
-git clone https://github.com/Bidroiddroid/rckit.git ai-dev-bootstrap
-cd ai-dev-bootstrap
-chmod +x install.sh bin/ai-dev
-./install.sh
+bash -c "$(wget -qO- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh)" --
 ```
 
-You can change `ai-dev-bootstrap` to any local folder name. That folder is not the generated project name.
+The bootstrap folder is not the generated project name. Project names are passed to `--new`.
 
 To install only one component:
 
 ```bash
-./install.sh python --dry-run
+bash -c "$(wget -qO- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh)" -- python --dry-run
 ```
 
 To use a profile:
 
 ```bash
-./install.sh --profile ai --dry-run
+bash -c "$(wget -qO- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh)" -- --profile ai --dry-run
 ```
 
 ## Common Commands
 
 ```bash
-bin/ai-dev list
-bin/ai-dev install python --dry-run
-bin/ai-dev install --profile ai --dry-run
-bin/ai-dev verify
-bin/ai-dev doctor
-bin/ai-dev new meu-projeto --stack node
-./install.sh --new meu-projeto --stack laravel
+bash -c "$(wget -qO- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh)" -- --profile developer --dry-run
+bash -c "$(wget -qO- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh)" -- python --dry-run
+bash -c "$(wget -qO- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh)" -- --profile ai --dry-run
+bash -c "$(wget -qO- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh)" -- --new meu-projeto --stack node
 ```
 
 ## Profiles

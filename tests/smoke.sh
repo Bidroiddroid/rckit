@@ -3,6 +3,8 @@ set -Eeuo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
+bash -n "$ROOT_DIR/remote-install.sh"
+
 "$ROOT_DIR/bin/ai-dev" list >/tmp/ai-dev-list.out
 grep -q "python" /tmp/ai-dev-list.out
 
