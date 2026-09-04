@@ -7,7 +7,7 @@ It is designed for Ubuntu, Debian, and WSL2 Ubuntu first. The first implementati
 ## Quick Start
 
 ```bash
-bash -c "$(wget -qO- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh)" -- --profile developer --dry-run
+wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh | bash -s -- --profile developer --dry-run
 ```
 
 Use `--dry-run` first to review what would happen. Remove it only after reviewing the plan.
@@ -15,7 +15,7 @@ Use `--dry-run` first to review what would happen. Remove it only after reviewin
 The repository folder is only the bootstrap tool. Your project name is chosen separately when you create a project:
 
 ```bash
-bash -c "$(wget -qO- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh)" -- --new meu-projeto --stack node
+wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh | bash -s -- --new meu-projeto --stack node
 ```
 
 The one-line installer stores the bootstrap repository at `~/.local/share/rckit` by default. Change that location with `RCKIT_INSTALL_DIR`.
@@ -25,30 +25,36 @@ The one-line installer stores the bootstrap repository at `~/.local/share/rckit`
 On any supported machine:
 
 ```bash
-bash -c "$(wget -qO- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh)" --
+wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh | bash -s --
 ```
 
 The bootstrap folder is not the generated project name. Project names are passed to `--new`.
 
+If the command returns to the prompt without output, test the download directly:
+
+```bash
+wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh
+```
+
 To install only one component:
 
 ```bash
-bash -c "$(wget -qO- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh)" -- python --dry-run
+wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh | bash -s -- python --dry-run
 ```
 
 To use a profile:
 
 ```bash
-bash -c "$(wget -qO- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh)" -- --profile ai --dry-run
+wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh | bash -s -- --profile ai --dry-run
 ```
 
 ## Common Commands
 
 ```bash
-bash -c "$(wget -qO- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh)" -- --profile developer --dry-run
-bash -c "$(wget -qO- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh)" -- python --dry-run
-bash -c "$(wget -qO- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh)" -- --profile ai --dry-run
-bash -c "$(wget -qO- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh)" -- --new meu-projeto --stack node
+wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh | bash -s -- --profile developer --dry-run
+wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh | bash -s -- python --dry-run
+wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh | bash -s -- --profile ai --dry-run
+wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh | bash -s -- --new meu-projeto --stack node
 ```
 
 ## Profiles

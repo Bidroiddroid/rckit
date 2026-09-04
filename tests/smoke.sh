@@ -12,6 +12,10 @@ AI_DEV_YES=1 AI_DEV_DRY_RUN=1 "$ROOT_DIR/bin/ai-dev" install python >/tmp/ai-dev
 grep -q "python" /tmp/ai-dev-install.out
 grep -q "credentials:" /tmp/ai-dev-install.out
 
+AI_DEV_DRY_RUN=1 "$ROOT_DIR/bin/ai-dev" install python >/tmp/ai-dev-install-dry-run-no-prompt.out
+grep -q "Dry-run complete; no changes made" /tmp/ai-dev-install-dry-run-no-prompt.out
+! grep -q "Proceed with install plan" /tmp/ai-dev-install-dry-run-no-prompt.out
+
 AI_DEV_YES=1 AI_DEV_DRY_RUN=1 "$ROOT_DIR/bin/ai-dev" install --profile ai >/tmp/ai-dev-profile.out
 grep -q "opencode" /tmp/ai-dev-profile.out
 grep -q "mcp-github" /tmp/ai-dev-profile.out

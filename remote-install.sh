@@ -28,20 +28,26 @@ install_git_if_missing() {
 sync_repository() {
   mkdir -p "$(dirname "$INSTALL_DIR")"
   if [[ -d "$INSTALL_DIR/.git" ]]; then
+    echo "Updating rckit in $INSTALL_DIR"
     git -C "$INSTALL_DIR" pull --ff-only
   elif [[ -e "$INSTALL_DIR" ]]; then
     echo "Install directory exists but is not a Git repository: $INSTALL_DIR" >&2
     echo "Set RCKIT_INSTALL_DIR to another path or move the existing directory." >&2
     exit 2
   else
+    echo "Cloning rckit into $INSTALL_DIR"
     git clone "$REPO_URL" "$INSTALL_DIR"
   fi
 }
 
 main() {
+  echo "AI DEV BOOTSTRAP remote installer"
+  echo "Repository: $REPO_URL"
+  echo "Install dir: $INSTALL_DIR"
   install_git_if_missing
   sync_repository
   chmod +x "$INSTALL_DIR/install.sh" "$INSTALL_DIR/bin/ai-dev"
+  echo "Running: $INSTALL_DIR/install.sh $*"
   exec "$INSTALL_DIR/install.sh" "$@"
 }
 

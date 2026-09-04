@@ -84,6 +84,10 @@ run_planned_action() {
   [[ ${#selected[@]} -gt 0 ]] || die "No components selected."
   mapfile -t AI_DEV_PLAN < <(catalog_resolve "${selected[@]}")
   plan_render "$action" "${AI_DEV_PLAN[@]}"
+  if [[ "${AI_DEV_DRY_RUN:-0}" == "1" ]]; then
+    log_info "Dry-run complete; no changes made"
+    return 0
+  fi
   confirm_plan "$action"
   runtime_execute_plan "$action" "${AI_DEV_PLAN[@]}"
 }
