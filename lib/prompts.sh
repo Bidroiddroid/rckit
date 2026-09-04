@@ -26,18 +26,68 @@ confirm_destructive() {
 }
 
 prompt_select_components() {
-  if [[ ! -t 0 ]]; then
+  if [[ ! -t 0 && "${AI_DEV_ALLOW_STDIN_PROMPT:-0}" != "1" ]]; then
     die "No interactive terminal available. Pass components explicitly or use --profile."
   fi
-  printf 'Available components:\n' >&2
-  local component
-  for component in "${AI_DEV_COMPONENTS[@]}"; do
-    printf '  - %s\n' "$component" >&2
+  local -a selected=()
+  local i line token index selected_count mark component
+  for i in "${!AI_DEV_COMPONENTS[@]}"; do
+    selected[$i]=0
   done
-  printf 'Enter components separated by spaces: ' >&2
-  local line
-  read -r line || die "Component selection cancelled"
-  for component in $line; do
-    printf '%s\n' "$component"
+
+  while true; do
+    printf '\nSelect components:\n' >&2
+    for i in "${!AI_DEV_COMPONENTS[@]}"; do
+      mark=" "
+      [[ "${selected[$i]}" == "1" ]] && mark="x"
+      printf '  [%s] %2d. %-22s %s\n' "$mark" "$((i + 1))" "${AI_DEV_COMPONENTS[$i]}" "${AI_DEV_COMPONENT_CATEGORY[$i]}" >&2
+    done
+    printf '\nType numbers to toggle, "a" all, "n" none, "d" done, "q" quit: ' >&2
+    read -r line || die "Component selection cancelled"
+    line="${line//,/ }"
+    case "$line" in
+      q|quit|cancel)
+        die "Component selection cancelled"
+        ;;
+      a|all)
+        for i in "${!selected[@]}"; do selected[$i]=1; done
+        continue
+        ;;
+      n|none|clear)
+        for i in "${!selected[@]}"; do selected[$i]=0; done
+        continue
+        ;;
+      d|done|"")
+        selected_count=0
+        for i in "${!selected[@]}"; do
+          [[ "${selected[$i]}" == "1" ]] && selected_count=$((selected_count + 1))
+        done
+        [[ "$selected_count" -gt 0 ]] || die "No components selected."
+        for i in "${!selected[@]}"; do
+          if [[ "${selected[$i]}" == "1" ]]; then
+            printf '%s\n' "${AI_DEV_COMPONENTS[$i]}"
+          fi
+        done
+        return 0
+        ;;
+    esac
+
+    for token in $line; do
+      if [[ "$token" =~ ^[0-9]+$ ]]; then
+        index=$((token - 1))
+        if [[ "$index" -ge 0 && "$index" -lt "${#AI_DEV_COMPONENTS[@]}" ]]; then
+          [[ "${selected[$index]}" == "1" ]] && selected[$index]=0 || selected[$index]=1
+        else
+          log_warn "Ignoring invalid selection number: $token"
+        fi
+      else
+        component="$token"
+        if index="$(catalog_index_of "$component" 2>/dev/null)"; then
+          [[ "${selected[$index]}" == "1" ]] && selected[$index]=0 || selected[$index]=1
+        else
+          log_warn "Ignoring unknown component: $component"
+        fi
+      fi
+    done
   done
 }

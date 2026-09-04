@@ -28,7 +28,7 @@ On any supported machine:
 wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh | bash -s --
 ```
 
-Running without components or `--profile` opens the interactive component selection.
+Running without components or `--profile` opens the interactive component selection. Type numbers to toggle `[x]` selections, then type `d` to continue.
 
 The bootstrap folder is not the generated project name. Project names are passed to `--new`.
 
