@@ -4,7 +4,39 @@
     "*": "ask",
     "read": "allow",
     "edit": "ask",
-    "bash": "ask"
+    "write": "ask",
+    "bash": "ask",
+    "webfetch": "ask"
   },
-  "mcp": {}
+  "agent": {
+    "build": {
+      "description": "Implementa mudancas pequenas e verificaveis seguindo OpenSpec e AGENTS.md.",
+      "permission": {
+        "read": "allow",
+        "edit": "ask",
+        "write": "ask",
+        "bash": "ask"
+      }
+    },
+    "review": {
+      "description": "Revisa bugs, regressions, seguranca e testes sem editar arquivos.",
+      "permission": {
+        "read": "allow",
+        "edit": "deny",
+        "write": "deny",
+        "bash": "ask"
+      }
+    },
+    "security": {
+      "description": "Revisa secrets, permissoes, validacao, dependencias e superficie de ataque.",
+      "permission": {
+        "read": "allow",
+        "edit": "deny",
+        "write": "deny",
+        "bash": "ask"
+      }
+    }
+  },
+  "mcp": {},
+  "lsp": true
 }

@@ -24,7 +24,21 @@ python3 -m json.tool "$ROOT_DIR/templates/opencode/mcp/sentry.json" >/dev/null
 python3 -m json.tool "$ROOT_DIR/templates/opencode/mcp/chrome-devtools.json" >/dev/null
 python3 -m json.tool "$ROOT_DIR/templates/opencode/mcp/firecrawl.json" >/dev/null
 grep -q '"mcp"' /tmp/ai-dev-opencode-json.out
+grep -q '"agent"' /tmp/ai-dev-opencode-json.out
+grep -q '"bash": "ask"' /tmp/ai-dev-opencode-json.out
 grep -q '"enabled": true' "$ROOT_DIR/templates/opencode/mcp/context7.json"
+grep -q "schema: spec-driven" "$ROOT_DIR/templates/openspec/config.yaml"
+grep -q "{{PROJECT_NAME}}" "$ROOT_DIR/templates/openspec/config.yaml"
+grep -q "Conhecimento caro" "$ROOT_DIR/templates/openspec/config.yaml"
+grep -q "proposal:" "$ROOT_DIR/templates/openspec/config.yaml"
+grep -q "design:" "$ROOT_DIR/templates/openspec/config.yaml"
+grep -q "specs:" "$ROOT_DIR/templates/openspec/config.yaml"
+grep -q "tasks:" "$ROOT_DIR/templates/openspec/config.yaml"
+test "$(wc -l <"$ROOT_DIR/templates/openspec/config.yaml")" -gt 200
+if rg -n "ghp_|github_pat_|sk-[A-Za-z0-9]|xox[baprs]-|AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z_-]{35}|postgres://[^{}[:space:]]+:[^{}[:space:]]+@" "$ROOT_DIR/templates/opencode" "$ROOT_DIR/templates/openspec"; then
+  echo "real-looking secret found in templates" >&2
+  exit 1
+fi
 
 AI_DEV_YES=1 AI_DEV_DRY_RUN=1 "$ROOT_DIR/bin/ai-dev" install laravel >/tmp/ai-dev-contract-laravel.out
 grep -q "php" /tmp/ai-dev-contract-laravel.out

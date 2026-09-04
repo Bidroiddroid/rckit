@@ -42,10 +42,22 @@ tmpdir="$(mktemp -d)"
   test -f sample/README.md
   test -f sample/.env.example
   test -f sample/docker-compose.yml
+  python3 -m json.tool sample/.opencode/opencode.json >/tmp/ai-dev-sample-opencode-json.out
+  grep -q '"agent"' /tmp/ai-dev-sample-opencode-json.out
+  grep -q '"mcp"' /tmp/ai-dev-sample-opencode-json.out
+  grep -q '"bash": "ask"' /tmp/ai-dev-sample-opencode-json.out
+  grep -q "schema: spec-driven" sample/openspec/config.yaml
+  grep -q "Conhecimento caro" sample/openspec/config.yaml
+  grep -q "proposal:" sample/openspec/config.yaml
+  grep -q "design:" sample/openspec/config.yaml
+  grep -q "specs:" sample/openspec/config.yaml
+  grep -q "tasks:" sample/openspec/config.yaml
   ! grep -R "{{PROJECT_NAME}}" sample
   "$ROOT_DIR/install.sh" --new custom-name --stack python --yes >/tmp/ai-dev-install-new.out
   test -f custom-name/README.md
   grep -q "custom-name" custom-name/README.md
+  grep -q "custom-name" custom-name/openspec/config.yaml
+  grep -q "Conhecimento caro" custom-name/openspec/config.yaml
   mkdir current-project
   cd current-project
   "$ROOT_DIR/bin/ai-dev" new . --stack node --yes >/tmp/ai-dev-new-current.out
@@ -53,6 +65,9 @@ tmpdir="$(mktemp -d)"
   test -f README.md
   test -f openspec/config.yaml
   grep -q "current-project" README.md
+  grep -q "current-project" openspec/config.yaml
+  grep -q "schema: spec-driven" openspec/config.yaml
+  grep -q "Conhecimento caro" openspec/config.yaml
 )
 
 printf 'smoke tests passed\n'

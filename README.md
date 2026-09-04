@@ -24,6 +24,20 @@ To generate project files inside the current directory, use `.` as the project p
 wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh | bash -s -- --new . --stack node
 ```
 
+If a project was created before the OpenSpec/OpenCode templates were completed, generate missing files again from inside that project:
+
+```bash
+cd meu-projeto
+wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh | bash -s -- --new . --stack node
+```
+
+Existing files are preserved. To replace an old minimal file, move it first, for example:
+
+```bash
+mv openspec/config.yaml openspec/config.yaml.old
+wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh | bash -s -- --new . --stack node
+```
+
 The one-line installer stores the bootstrap repository at `~/.local/share/rckit` by default. Change that location with `RCKIT_INSTALL_DIR`.
 
 ## Install From GitHub

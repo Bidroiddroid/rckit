@@ -1,2 +1,349 @@
-version: 1
-project: "{{PROJECT_NAME}}"
+schema: spec-driven
+
+context: |
+  NOME DO PROJETO
+  {{PROJECT_NAME}}
+
+  Visão Geral
+  Descreva resumidamente o sistema {{PROJECT_NAME}}. Informe o produto real, o tipo de aplicação e o valor principal para o usuário.
+
+  Objetivo
+  Explique qual problema o sistema resolve e qual seu objetivo principal. Toda implementação deve preservar o problema antes da solução.
+
+  Público-Alvo
+  Informe quem utilizará a aplicação: usuários finais, administradores, equipes internas, clientes externos, operadores, desenvolvedores ou outros perfis reais.
+
+  Domínio
+  Descreva o domínio de negócio do projeto: SaaS, marketplace, CRM, ERP, financeiro, educação, saúde, automação, e-commerce, conteúdo, IA, infraestrutura ou outro domínio concreto.
+
+  Idioma
+  Português brasileiro é o idioma padrão para documentação, propostas, specs e tarefas. Interface, mensagens e conteúdo do produto devem seguir o idioma escolhido para o projeto. Código, comandos, nomes de arquivos e chaves técnicas devem usar inglês/kebab-case quando isso melhorar compatibilidade.
+
+  Arquitetura
+  Frontend
+  Informe framework, roteamento, design system, gerenciamento de estado, validação, acessibilidade, responsividade e estratégia de build quando existir frontend.
+
+  Backend
+  Informe runtime, framework, padrões de API, autenticação, autorização, jobs, serviços internos, validação, logs e tratamento de erros.
+
+  Banco de Dados
+  Informe banco principal, ORM/query builder, migrações, seeds, índices, backups, relacionamentos e estratégia de dados sensíveis.
+
+  APIs
+  Liste APIs públicas, privadas, internas e externas. Toda API deve possuir contrato claro, validação de entrada, erros previsíveis e versionamento quando necessário.
+
+  Integrações
+  Liste integrações reais: pagamentos, e-mail, WhatsApp, GitHub, Sentry, analytics, IA, storage, webhooks, filas, MCPs e serviços externos.
+
+  Infraestrutura
+  Descreva hospedagem, containers, redes, domínios, TLS, variáveis de ambiente, CI/CD, backups, observabilidade e ambientes.
+
+  Serviços
+  Liste serviços de aplicação, workers, filas, caches, bancos, proxies, storage, monitoramento e dashboards administrativos.
+
+  Armazenamento
+  Defina onde ficam arquivos, uploads, assets, documentos, logs, cache, backups e dados temporários.
+
+  Monitoramento
+  Defina métricas, logs, traces, alertas, health checks, auditoria e ferramentas como Sentry quando selecionadas.
+
+  Segurança
+  Nunca versionar secrets. Usar `.env.example` apenas com placeholders. Aplicar menor privilégio, validação de entrada, rate limit, auditoria, criptografia por ferramenta oficial e confirmação para ações destrutivas.
+
+  Estrutura do Projeto
+  frontend/
+  Código de interface quando houver frontend.
+
+  backend/
+  Código servidor/API quando houver backend.
+
+  shared/
+  Tipos, contratos, schemas e utilitários compartilhados.
+
+  database/
+  Migrações, seeds, schema, backups locais e documentação de dados.
+
+  api/
+  Contratos, coleções, schemas, documentação e clientes de API.
+
+  services/
+  Serviços internos e integrações de domínio.
+
+  integrations/
+  Adaptadores para APIs externas, MCPs, webhooks e SDKs.
+
+  workers/
+  Jobs assíncronos, consumidores de filas e tarefas agendadas.
+
+  scripts/
+  Automação local, manutenção, setup e tarefas operacionais.
+
+  config/
+  Configurações versionáveis, exemplos e schemas.
+
+  docs/
+  Documentação técnica e de produto.
+
+  tests/
+  Testes unitários, integração, contrato, e2e e fixtures.
+
+  public/
+  Arquivos públicos e assets servidos diretamente.
+
+  dist/
+  Artefatos de build gerados. Não editar manualmente.
+
+  Convenções
+  Convenção para nomes de arquivos
+  Usar kebab-case para arquivos gerais, PascalCase para componentes quando a stack exigir, e nomes claros baseados no domínio.
+
+  Convenção para nomes de pastas
+  Usar minúsculas/kebab-case e separar por responsabilidade: domínio, camada, integração ou tipo de artefato.
+
+  Convenção para APIs
+  Usar rotas previsíveis, versionamento quando necessário, DTOs/schemas explícitos, erros padronizados e documentação de contrato.
+
+  Convenção para banco de dados
+  Tabelas e colunas em snake_case, migrações pequenas, índices justificados por consultas reais, backups antes de mudanças destrutivas e dados sensíveis protegidos.
+
+  Convenção para componentes
+  Componentes devem ter responsabilidade única, estado claro, propriedades tipadas e testes quando carregarem regra de negócio.
+
+  Convenção para funções
+  Funções devem ser pequenas, nomeadas por ação/domínio e evitar efeitos colaterais escondidos.
+
+  Convenção para classes
+  Classes devem representar conceitos reais do domínio ou infraestrutura; evitar wrappers genéricos sem valor.
+
+  Convenção para eventos
+  Eventos devem usar nomes em passado ou ação clara, payload versionável e consumidor documentado.
+
+  Estratégia de autenticação
+  Definir provedor, fluxo de login, sessão/token, rotação, recuperação de conta e proteção contra abuso.
+
+  Estratégia de autorização
+  Definir papéis, permissões, ownership, escopos, políticas por rota/recurso e testes para acesso negado.
+
+  Estratégia de logs
+  Registrar eventos úteis com timestamp, nível, correlação e contexto sem expor secrets ou dados sensíveis.
+
+  Estratégia de validação
+  Validar entrada nas bordas, regras de domínio no core e respostas externas antes de confiar nelas.
+
+  Estratégia de tratamento de erros
+  Falhar cedo, retornar mensagens acionáveis, preservar dados e registrar detalhes suficientes para diagnóstico.
+
+  Estratégia de cache
+  Definir chaves, TTL, invalidação, fallback, aquecimento e impacto de dados obsoletos.
+
+  Estratégia de versionamento
+  Usar Git com commits focados, branch principal protegida quando aplicável, changelog para mudanças relevantes e versionamento de APIs quando necessário.
+
+  Estratégia de testes
+  Cobrir regra de negócio, contratos de API, segurança, permissões, migrações, erros e fluxos críticos antes do deploy.
+
+  Ambientes
+  Desenvolvimento
+  Ambiente local com `.env`, dados seguros, logs legíveis e comandos documentados.
+
+  Homologação
+  Ambiente próximo de produção para validar integração, dados, deploy, migrações e permissões.
+
+  Produção
+  Ambiente com backups, monitoramento, alertas, secrets seguros, TLS, logs e rollback.
+
+  Build
+  Desenvolvimento
+  Comandos rápidos para lint, typecheck, testes e execução local.
+
+  Build
+  Processo reproduzível para gerar artefatos finais.
+
+  Testes
+  Estratégia automatizada mínima antes de merge/deploy.
+
+  Deploy
+  Pipeline, rollback, migrações, cache, health checks e validação pós-deploy.
+
+  Banco de Dados
+  Entidades
+  Liste entidades reais do domínio.
+
+  Relacionamentos
+  Descreva cardinalidade, ownership, cascatas e integridade.
+
+  Migrações
+  Migrações devem ser revisáveis, reversíveis quando possível e seguras para dados existentes.
+
+  Índices
+  Índices devem refletir consultas reais e impacto de escrita.
+
+  Backups
+  Definir frequência, retenção, restauração testada e responsáveis.
+
+  APIs
+  Públicas
+  Endpoints públicos e contratos expostos a clientes.
+
+  Privadas
+  Endpoints autenticados para usuários do produto.
+
+  Internas
+  Endpoints entre serviços e jobs internos.
+
+  Externas
+  Serviços de terceiros consumidos pela aplicação.
+
+  Integrações
+  APIs
+  Documentar autenticação, rate limit, retries, timeouts e erros.
+
+  Webhooks
+  Validar assinatura, idempotência, reprocessamento e auditoria.
+
+  Filas
+  Definir produtor, consumidor, retry, dead-letter e ordenação.
+
+  Serviços Externos
+  Documentar contrato, credenciais, ambiente e plano de falha.
+
+  Segurança
+  Autenticação
+  Definir login, logout, sessão, rotação e recuperação.
+
+  Autorização
+  Aplicar menor privilégio e testar acesso negado.
+
+  Permissões
+  Centralizar regras e evitar permissões implícitas.
+
+  Auditoria
+  Registrar mudanças relevantes, usuário, recurso e origem.
+
+  Criptografia
+  Usar mecanismos oficiais de runtime, banco, storage e transporte.
+
+  Rate Limit
+  Proteger login, APIs públicas, webhooks e operações custosas.
+
+  Logs
+  Nunca registrar senhas, tokens, chaves privadas ou dados pessoais desnecessários.
+
+  Módulos do Sistema
+  Core
+  módulo-core-1
+  módulo-core-2
+  módulo-core-3
+
+  Autenticação
+  login
+  cadastro
+  recuperação-de-senha
+  perfil
+  permissões
+
+  Administração
+  usuários
+  grupos
+  permissões
+  configurações
+  auditoria
+  logs
+
+  Cadastros
+  cadastro-1
+  cadastro-2
+  cadastro-3
+  cadastro-4
+
+  Operações
+  operação-1
+  operação-2
+  operação-3
+  operação-4
+
+  Financeiro
+  financeiro-1
+  financeiro-2
+
+  Comunicação
+  notificações
+  emails
+  mensagens
+  webhooks
+
+  Relatórios
+  dashboard
+  indicadores
+  exportações
+
+  Plataforma
+  uploads
+  arquivos
+  busca
+  importação
+  exportação
+
+  Integrações
+  integração-1
+  integração-2
+  integração-3
+
+  Configurações
+  preferências
+  temas
+  idiomas
+
+  Analytics
+  métricas
+  eventos
+  monitoramento
+
+  Conhecimento caro e armadilhas encontradas
+  - O nome do repositório rckit não é o nome do projeto. O projeto gerado deve usar {{PROJECT_NAME}}.
+  - Instalar ferramentas na máquina e gerar arquivos do projeto são fluxos diferentes. Use `--new {{PROJECT_NAME}}` ou `--new .` para criar scaffold.
+  - `--dry-run` nunca deve instalar pacotes, escrever configs reais, alterar Docker ou exigir verificação final de instalação simulada.
+  - MCPs consomem contexto e devem ser opt-in. Não ativar todos por padrão.
+  - Credenciais como `GITHUB_PERSONAL_ACCESS_TOKEN`, `DATABASE_URL` e `FIRECRAWL_API_KEY` devem ficar fora do Git.
+  - OpenCode v1 e v2 possuem diferenças de schema para MCPs; confirmar documentação oficial antes de alterar configuração avançada.
+  - OpenCode pode existir como `opencode` ou `opencode2`; não assumir um único binário.
+  - Playwright MCP requer Node.js 20+.
+  - Chrome DevTools MCP expõe conteúdo do navegador ao agente; usar somente quando necessário.
+  - Firecrawl MCP exige API key.
+  - Em Ubuntu/Debian, o pacote `fd-find` pode instalar o binário como `fdfind`.
+  - Não sobrescrever arquivos existentes sem confirmação explícita.
+  - Estado local, logs, `.env` e arquivos sensíveis devem ser ignorados pelo Git.
+  - Terminal via pipe pode perder stdin interativo; scripts remotos devem reconectar `/dev/tty` quando precisarem perguntar algo.
+  - Menu com clique depende do terminal. Sempre manter fallback com teclado.
+
+rules:
+  proposal:
+    - "Manter a proposta objetiva."
+    - "Explicar o problema antes da solução."
+    - "Evitar detalhes de implementação."
+    - "Listar módulos afetados."
+    - "Informar BREAKING CHANGES quando existirem."
+  design:
+    - "Documentar decisões arquiteturais."
+    - "Documentar impactos no banco de dados."
+    - "Documentar impactos nas APIs."
+    - "Documentar impactos na arquitetura."
+    - "Explicar alternativas consideradas."
+    - "Listar riscos."
+    - "Listar mitigação para cada risco."
+  specs:
+    - "Escrever requisitos em português."
+    - "Organizar requisitos por módulo."
+    - "Cada requisito deve possuir cenário testável."
+    - "Utilizar MUST, SHOULD e MAY quando apropriado."
+    - "Evitar ambiguidades."
+  tasks:
+    - "Dividir tarefas em pequenas entregas."
+    - "Respeitar dependências."
+    - "Criar checklist de implementação."
+    - "Criar checklist de testes."
+    - "Criar checklist de documentação."
+    - "Finalizar com deploy."
+    - "Finalizar com validação da aplicação."
+    - "Finalizar com limpeza de cache."
+    - "Finalizar com revisão geral do projeto."

@@ -64,7 +64,7 @@ main() {
   sync_repository
   chmod +x "$INSTALL_DIR/install.sh" "$INSTALL_DIR/bin/ai-dev"
   echo "Running: $INSTALL_DIR/install.sh $*"
-  if [[ ! -t 0 && -r /dev/tty ]]; then
+  if [[ $# -eq 0 && ! -t 0 && -r /dev/tty ]]; then
     exec < /dev/tty
   fi
   exec "$INSTALL_DIR/install.sh" "$@"
