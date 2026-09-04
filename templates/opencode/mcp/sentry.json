@@ -1,0 +1,5 @@
+{
+  "type": "local",
+  "command": ["npx", "-y", "@sentry/mcp-server@latest", "--access-token=${SENTRY_AUTH_TOKEN}"],
+  "disabled": true
+}

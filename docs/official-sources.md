@@ -30,3 +30,5 @@ These sources were checked before adding the initial AI and MCP module placehold
 - Playwright MCP requires Node.js 20 or newer.
 - Chrome DevTools MCP exposes browser content to the agent and must remain opt-in.
 - Firecrawl MCP requires an API key for hosted/local examples.
+- MCP module verification must check the concrete runtime needed by the configured server, not only the presence of OpenCode.
+- MCP config fragments live under `templates/opencode/mcp/` and are disabled by default. Enabling them should remain an explicit user action until a safe merge flow is implemented.

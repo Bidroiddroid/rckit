@@ -1,0 +1,5 @@
+{
+  "type": "local",
+  "command": ["npx", "-y", "ctx7", "mcp"],
+  "disabled": true
+}

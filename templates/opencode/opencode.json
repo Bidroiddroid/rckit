@@ -6,5 +6,7 @@
     "edit": "ask",
     "bash": "ask"
   },
-  "mcp": {}
+  "mcp": {
+    "servers": {}
+  }
 }
