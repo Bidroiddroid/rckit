@@ -46,6 +46,13 @@ tmpdir="$(mktemp -d)"
   "$ROOT_DIR/install.sh" --new custom-name --stack python --yes >/tmp/ai-dev-install-new.out
   test -f custom-name/README.md
   grep -q "custom-name" custom-name/README.md
+  mkdir current-project
+  cd current-project
+  "$ROOT_DIR/bin/ai-dev" new . --stack node --yes >/tmp/ai-dev-new-current.out
+  test -f AGENTS.md
+  test -f README.md
+  test -f openspec/config.yaml
+  grep -q "current-project" README.md
 )
 
 printf 'smoke tests passed\n'

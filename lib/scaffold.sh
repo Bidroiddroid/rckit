@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 scaffold_new() {
-  local name="" stack="node"
+  local name="" stack="node" target="" project_name=""
   while (($#)); do
     case "$1" in
       --stack)
@@ -27,18 +27,25 @@ scaffold_new() {
   done
   [[ -n "$name" ]] || die "new requires a project name"
   [[ "$stack" == "node" || "$stack" == "python" || "$stack" == "laravel" ]] || die "Unsupported stack: $stack"
-  if [[ -e "$name" ]]; then
-    confirm "Project path exists. Write missing files into $name?" || die "Project creation cancelled"
+  if [[ "$name" == "." ]]; then
+    target="."
+    project_name="$(basename "$PWD")"
+  else
+    target="$name"
+    project_name="$name"
   fi
-  mkdir -p "$name/docs" "$name/tests" "$name/openspec" "$name/.opencode/skills"
-  scaffold_write "$name/AGENTS.md" "$AI_DEV_ROOT/templates/project/base/AGENTS.md" "$name"
-  scaffold_write "$name/README.md" "$AI_DEV_ROOT/templates/project/base/README.md" "$name"
-  scaffold_write "$name/.env.example" "$AI_DEV_ROOT/templates/project/base/env.example" "$name"
-  scaffold_write "$name/.gitignore" "$AI_DEV_ROOT/templates/project/base/gitignore" "$name"
-  scaffold_write "$name/docker-compose.yml" "$AI_DEV_ROOT/templates/project/$stack/docker-compose.yml" "$name"
-  scaffold_write "$name/.opencode/opencode.json" "$AI_DEV_ROOT/templates/opencode/opencode.json" "$name"
-  scaffold_write "$name/openspec/config.yaml" "$AI_DEV_ROOT/templates/openspec/config.yaml" "$name"
-  log_info "Created project scaffold: $name ($stack)"
+  if [[ -e "$target" ]]; then
+    confirm "Project path exists. Write missing files into $target?" || die "Project creation cancelled"
+  fi
+  mkdir -p "$target/docs" "$target/tests" "$target/openspec" "$target/.opencode/skills"
+  scaffold_write "$target/AGENTS.md" "$AI_DEV_ROOT/templates/project/base/AGENTS.md" "$project_name"
+  scaffold_write "$target/README.md" "$AI_DEV_ROOT/templates/project/base/README.md" "$project_name"
+  scaffold_write "$target/.env.example" "$AI_DEV_ROOT/templates/project/base/env.example" "$project_name"
+  scaffold_write "$target/.gitignore" "$AI_DEV_ROOT/templates/project/base/gitignore" "$project_name"
+  scaffold_write "$target/docker-compose.yml" "$AI_DEV_ROOT/templates/project/$stack/docker-compose.yml" "$project_name"
+  scaffold_write "$target/.opencode/opencode.json" "$AI_DEV_ROOT/templates/opencode/opencode.json" "$project_name"
+  scaffold_write "$target/openspec/config.yaml" "$AI_DEV_ROOT/templates/openspec/config.yaml" "$project_name"
+  log_info "Created project scaffold: $target ($stack, project: $project_name)"
 }
 
 scaffold_write() {

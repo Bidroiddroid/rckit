@@ -18,6 +18,12 @@ The repository folder is only the bootstrap tool. Your project name is chosen se
 wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh | bash -s -- --new meu-projeto --stack node
 ```
 
+To generate project files inside the current directory, use `.` as the project path:
+
+```bash
+wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh | bash -s -- --new . --stack node
+```
+
 The one-line installer stores the bootstrap repository at `~/.local/share/rckit` by default. Change that location with `RCKIT_INSTALL_DIR`.
 
 ## Install From GitHub
