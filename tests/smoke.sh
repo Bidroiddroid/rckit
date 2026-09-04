@@ -42,6 +42,11 @@ tmpdir="$(mktemp -d)"
   test -f sample/README.md
   test -f sample/.env.example
   test -f sample/docker-compose.yml
+  test -d sample/openspec/changes
+  test -d sample/openspec/specs
+  test -f sample/openspec/README.md
+  test -f sample/.opencode/skills/code-review/SKILL.md
+  test -f sample/.opencode/skills/mcp-setup/SKILL.md
   python3 -m json.tool sample/.opencode/opencode.json >/tmp/ai-dev-sample-opencode-json.out
   grep -q '"agent"' /tmp/ai-dev-sample-opencode-json.out
   grep -q '"mcp"' /tmp/ai-dev-sample-opencode-json.out
@@ -64,10 +69,25 @@ tmpdir="$(mktemp -d)"
   test -f AGENTS.md
   test -f README.md
   test -f openspec/config.yaml
+  test -d openspec/changes
+  test -d openspec/specs
+  test -f openspec/README.md
+  test -f .opencode/skills/code-review/SKILL.md
   grep -q "current-project" README.md
   grep -q "current-project" openspec/config.yaml
   grep -q "schema: spec-driven" openspec/config.yaml
   grep -q "Conhecimento caro" openspec/config.yaml
+  cd "$tmpdir"
+  mkdir legacy-project
+  cd legacy-project
+  mkdir -p openspec .opencode
+  printf 'version: 1\nproject: legacy-project\n' >openspec/config.yaml
+  printf '{"mcp":{}}\n' >.opencode/opencode.json
+  "$ROOT_DIR/bin/ai-dev" new . --stack node --yes >/tmp/ai-dev-new-legacy.out
+  test -f openspec/config.yaml.old.*
+  test -f .opencode/opencode.json.old.*
+  grep -q "Conhecimento caro" openspec/config.yaml
+  grep -q '"agent"' .opencode/opencode.json
 )
 
 printf 'smoke tests passed\n'

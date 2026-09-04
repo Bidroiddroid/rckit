@@ -37,7 +37,7 @@ scaffold_new() {
   if [[ -e "$target" ]]; then
     confirm "Project path exists. Write missing files into $target?" || die "Project creation cancelled"
   fi
-  mkdir -p "$target/docs" "$target/tests" "$target/openspec" "$target/.opencode/skills"
+  mkdir -p "$target/docs" "$target/tests" "$target/openspec/changes" "$target/openspec/specs" "$target/.opencode/skills"
   scaffold_write "$target/AGENTS.md" "$AI_DEV_ROOT/templates/project/base/AGENTS.md" "$project_name"
   scaffold_write "$target/README.md" "$AI_DEV_ROOT/templates/project/base/README.md" "$project_name"
   scaffold_write "$target/.env.example" "$AI_DEV_ROOT/templates/project/base/env.example" "$project_name"
@@ -45,16 +45,52 @@ scaffold_new() {
   scaffold_write "$target/docker-compose.yml" "$AI_DEV_ROOT/templates/project/$stack/docker-compose.yml" "$project_name"
   scaffold_write "$target/.opencode/opencode.json" "$AI_DEV_ROOT/templates/opencode/opencode.json" "$project_name"
   scaffold_write "$target/openspec/config.yaml" "$AI_DEV_ROOT/templates/openspec/config.yaml" "$project_name"
+  scaffold_copy_tree "$target/.opencode/skills" "$AI_DEV_ROOT/skills" "$project_name"
+  scaffold_copy_tree "$target/openspec" "$AI_DEV_ROOT/templates/openspec" "$project_name"
   log_info "Created project scaffold: $target ($stack, project: $project_name)"
+}
+
+scaffold_should_refresh() {
+  local dest="$1"
+  case "$dest" in
+    */openspec/config.yaml)
+      grep -q "schema: spec-driven" "$dest" && grep -q "Conhecimento caro" "$dest" && return 1
+      return 0
+      ;;
+    */.opencode/opencode.json)
+      python3 -m json.tool "$dest" >/dev/null 2>&1 && grep -q '"agent"' "$dest" && grep -q '"mcp"' "$dest" && return 1
+      return 0
+      ;;
+  esac
+  return 1
 }
 
 scaffold_write() {
   local dest="$1" src="$2" project_name="$3"
   [[ -f "$src" ]] || die "Missing template: $src"
   if [[ -e "$dest" ]]; then
-    log_warn "Skipping existing file: $dest"
-    return 0
+    if scaffold_should_refresh "$dest"; then
+      local backup
+      backup="$dest.old.$(date +%Y%m%d%H%M%S)"
+      mv "$dest" "$backup"
+      log_warn "Backed up incomplete config: $backup"
+    else
+      log_warn "Skipping existing file: $dest"
+      return 0
+    fi
   fi
   mkdir -p "$(dirname "$dest")"
   sed "s/{{PROJECT_NAME}}/$project_name/g" "$src" >"$dest"
+}
+
+scaffold_copy_tree() {
+  local dest_dir="$1" src_dir="$2" project_name="$3"
+  local src rel dest
+  [[ -d "$src_dir" ]] || return 0
+  while IFS= read -r src; do
+    rel="${src#"$src_dir"/}"
+    [[ "$rel" == "config.yaml" ]] && continue
+    dest="$dest_dir/$rel"
+    scaffold_write "$dest" "$src" "$project_name"
+  done < <(find "$src_dir" -type f | sort)
 }

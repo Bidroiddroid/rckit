@@ -32,3 +32,11 @@
 - [x] 5.4 Validar o fluxo remoto com `remote-install.sh -- --new . --stack node` em diretório temporário.
 - [x] 5.5 Limpar arquivos temporários/cache de teste quando aplicável.
 - [x] 5.6 Fazer revisão geral para secrets, placeholders não resolvidos e configurações inseguras.
+
+## 6. Complete Generated Directory Trees
+
+- [x] 6.1 Criar templates versionáveis para `openspec/changes/` e `openspec/specs/`.
+- [x] 6.2 Criar documentação base `openspec/README.md` para projetos gerados.
+- [x] 6.3 Copiar skills do rckit para `.opencode/skills/` em projetos gerados.
+- [x] 6.4 Detectar `openspec/config.yaml` e `.opencode/opencode.json` antigos/incompletos, fazer backup e recriar versões completas.
+- [x] 6.5 Atualizar testes para validar diretórios, arquivos, skills e refresh seguro de configs antigas.
