@@ -1,20 +1,435 @@
 schema: spec-driven
 
-# Project context (optional)
-# This is shown to AI when creating artifacts.
-# Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+context: |
+  NOME DO PROJETO
+  AI DEV BOOTSTRAP / rckit
 
-# Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always include a "Non-goals" section
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+  Visão Geral
+  Sistema de bootstrap e gerenciamento de ambiente de desenvolvimento com IA, distribuído pelo GitHub em https://github.com/Bidroiddroid/rckit. O repositório rckit é a ferramenta de bootstrap, não o nome obrigatório dos projetos gerados.
+
+  Objetivo
+  Resolver o problema de preparar máquinas novas ou ambientes limpos sem repetir comandos manuais, scripts monolíticos ou instalações completas desnecessárias. O objetivo principal é permitir que o usuário rode um comando único, revise o plano com dry-run quando quiser, escolha componentes ou perfis, e instale somente o que precisa para desenvolvimento profissional com IA.
+
+  Público-Alvo
+  Desenvolvedores, equipes técnicas, DevOps, freelancers e usuários avançados que precisam preparar máquinas Ubuntu, Debian ou WSL2 Ubuntu para desenvolvimento com Git, linguagens, Docker, ferramentas de segurança, OpenCode, OpenSpec e MCPs.
+
+  Domínio
+  Automação de ambiente de desenvolvimento, DevOps local, produtividade de agentes de IA, scaffolding de novos projetos, configuração segura de ferramentas e infraestrutura local baseada em host + Docker.
+
+  Idioma
+  Português brasileiro para documentação de produto e instruções principais. Código, comandos, nomes de arquivos, nomes de módulos e chaves de configuração devem permanecer em inglês/kebab-case quando isso facilitar portabilidade e compatibilidade técnica.
+
+  Arquitetura
+  Frontend
+  Não há frontend web na primeira versão. A interface é CLI interativa ou não interativa. Quando houver terminal interativo, a seleção pode evoluir para uma UI mais rica; sem terminal, o usuário deve passar componentes ou perfis explicitamente.
+
+  Backend
+  Núcleo shell-first em Bash estrito, com entrypoints pequenos e lógica separada em bibliotecas e módulos. `remote-install.sh` baixa/clona/atualiza o bootstrap e delega para `install.sh`; `install.sh` delega para `bin/ai-dev`; `bin/ai-dev` roteia comandos e usa `lib/*`.
+
+  Banco de Dados
+  O bootstrap não possui banco de dados central. O estado local fica em `state/installed.yaml` como cache/auditoria e nunca deve ser a única fonte da verdade. PostgreSQL, Redis e MySQL/MariaDB são serviços opcionais provisionados preferencialmente via Docker para projetos.
+
+  APIs
+  A API principal é a CLI `ai-dev`: `install`, `update`, `verify`, `doctor`, `list`, `status`, `enable`, `disable`, `remove`, `new`, `reset`. A API interna é o contrato de módulos: `detect`, `install`, `configure`, `verify`, `update`, `remove`, `doctor`.
+
+  Integrações
+  Integrações iniciais: Git, GitHub CLI, Make, jq, yq, ripgrep, fd, mise, Node.js, npm, pnpm, TypeScript, Python, pip, venv, uv, Ruff, PHP, Composer, Laravel, Docker, Docker Compose, Portainer, Traefik, PostgreSQL, Redis, MySQL/MariaDB opcional, OpenCode, OpenSpec, Context7 MCP, GitHub MCP, Playwright MCP, PostgreSQL MCP, Sentry MCP, Chrome DevTools MCP, Firecrawl MCP, Gitleaks, Trivy e Semgrep.
+
+  Infraestrutura
+  Distribuição via GitHub. Instalação remota por comando único usando `remote-install.sh`. Diretório padrão do bootstrap instalado: `~/.local/share/rckit`, configurável por `RCKIT_INSTALL_DIR`. URL do repositório configurável por `RCKIT_REPO_URL`.
+
+  Serviços
+  Serviços de projeto devem ser opcionais e preferencialmente Docker-based: PostgreSQL, Redis, MySQL/MariaDB, Traefik e Portainer. Docker é infraestrutura para projetos e serviços, não runtime obrigatório para todas as ferramentas de desenvolvimento.
+
+  Armazenamento
+  Código e templates no repositório GitHub. Estado local em `state/installed.yaml`. Logs em `logs/*.log`. Secrets devem ficar fora do Git, preferencialmente em arquivos locais ignorados ou mecanismos seguros do sistema/CLI.
+
+  Monitoramento
+  Primeira versão usa logs auditáveis por comando e `ai-dev verify`/`ai-dev doctor` como mecanismos de observabilidade local. Integrações futuras podem usar Sentry ou outros serviços somente quando selecionados.
+
+  Segurança
+  Instalação seletiva, plano antes de mudanças, dry-run seguro, confirmação para ações destrutivas, MCPs opt-in, credenciais solicitadas somente quando necessário, nenhum token em arquivos versionados, nenhum overwrite silencioso de configuração existente, portas administrativas locais por padrão.
+
+  Estrutura do Projeto
+  frontend/
+  Não utilizado na primeira versão.
+
+  backend/
+  Representado pelo núcleo CLI em `bin/`, `lib/` e `modules/`.
+
+  shared/
+  Bibliotecas compartilhadas em `lib/`.
+
+  database/
+  Não há schema de banco central. Serviços de banco são módulos em `modules/postgresql`, `modules/redis` e `modules/mysql`.
+
+  api/
+  API pública é a CLI `bin/ai-dev`. API interna é o contrato dos módulos.
+
+  services/
+  Serviços opcionais em módulos de infraestrutura: Docker, Compose, PostgreSQL, Redis, MySQL, Traefik, Portainer.
+
+  integrations/
+  Integrações em `modules/opencode`, `modules/openspec`, `modules/mcp/*`, `modules/github-cli` e `modules/security/*`.
+
+  workers/
+  Não utilizado na primeira versão. Futuramente pode hospedar jobs assíncronos de instalação/verificação.
+
+  scripts/
+  Entrypoints `remote-install.sh` e `install.sh`; testes em `tests/*.sh`.
+
+  config/
+  Manifesto declarativo em `config/manifest.yaml` e perfis em `config/profiles.yaml`.
+
+  docs/
+  Documentação em `README.md` e `docs/`.
+
+  tests/
+  Testes em `tests/smoke.sh` e `tests/contracts.sh`.
+
+  public/
+  Não utilizado na primeira versão.
+
+  dist/
+  Não utilizado na primeira versão. Futuramente pode conter release artifacts se houver CLI compilada.
+
+  Convenções
+  Convenção para nomes de arquivos
+  Shell scripts e módulos em minúsculas com kebab-case quando houver múltiplas palavras. Entry points: `remote-install.sh`, `install.sh`, `bin/ai-dev`. Specs OpenSpec em `specs/<capability>/spec.md`.
+
+  Convenção para nomes de pastas
+  Pastas em minúsculas/kebab-case. Componentes seguem o ID do manifesto sempre que possível: `modules/github-cli`, `modules/mcp/chrome-devtools`, `modules/security/semgrep`.
+
+  Convenção para APIs
+  Comandos CLI em inglês, verbos curtos e estáveis. Argumentos longos com `--kebab-case`. Saídas devem ser legíveis por humanos e manter exit codes úteis.
+
+  Convenção para banco de dados
+  Serviços de banco opcionais via Docker, volumes preservados por padrão, bind local para portas sensíveis, sem senhas reais versionadas. Templates usam `.env.example` com placeholders.
+
+  Convenção para componentes
+  Todo componente deve existir no `config/manifest.yaml`, apontar para um módulo real e declarar categoria, dependências, plataformas suportadas, credenciais e custo de contexto.
+
+  Convenção para funções
+  Funções públicas de libs usam prefixo do domínio quando fizer sentido (`catalog_*`, `runtime_*`, `platform_*`, `state_*`, `security_*`). Funções de módulo seguem `module_detect`, `module_install`, `module_configure`, `module_verify`, `module_update`, `module_remove`, `module_doctor`.
+
+  Convenção para classes
+  Não aplicável na primeira versão Bash. Se uma linguagem com classes for adotada no futuro, classes devem representar conceitos do domínio, não wrappers genéricos.
+
+  Convenção para eventos
+  Eventos auditáveis são registrados em logs por ação: install, update, verify, doctor, remove, reset e errors. Cada log deve conter timestamp, nível, componente e resultado quando aplicável.
+
+  Estratégia de autenticação
+  A ferramenta não autentica usuários localmente. Integrações externas como GitHub, Sentry e Firecrawl usam autenticação própria, solicitada somente quando o componente é selecionado.
+
+  Estratégia de autorização
+  Ações privilegiadas usam `sudo` somente quando necessário e somente após plano/confirmacão. OpenCode deve usar permissões conservadoras; MCPs não devem receber escopos amplos por padrão.
+
+  Estratégia de logs
+  Logs em `logs/*.log`, ignorados pelo Git. Não registrar secrets. Registrar plano, componentes selecionados, ações puladas, erros e status final.
+
+  Estratégia de validação
+  Validar plataforma, manifesto, módulos existentes, dependências resolvidas, componentes desconhecidos, argumentos obrigatórios, diretórios de destino e pré-condições antes de executar mudanças.
+
+  Estratégia de tratamento de erros
+  Falhar cedo com mensagem acionável e exit code diferente de zero. Não continuar instalação parcial sem registrar erro. Dry-run nunca deve depender de verificação pós-instalação real.
+
+  Estratégia de cache
+  `state/installed.yaml` é cache/auditoria, não fonte da verdade. Sempre reconciliar com comandos reais como `command -v`, `docker info`, versões e health checks.
+
+  Estratégia de versionamento
+  Git no GitHub, branch principal `main`. Commits pequenos e descritivos. Evitar versionar logs, estado local, secrets e arquivos gerados sensíveis.
+
+  Estratégia de testes
+  Testes shell locais com `tests/smoke.sh` e `tests/contracts.sh`. CI GitHub executa testes sem modificar o host. Verificar sintaxe com `bash -n` e ampliar cobertura antes de endurecer instaladores reais.
+
+  Ambientes
+  Desenvolvimento
+  Execução local no clone do repositório ou em `~/.local/share/rckit`. Usar `--dry-run` para revisar planos.
+
+  Homologação
+  Testar em diretórios temporários e máquinas/containers Ubuntu/Debian limpos antes de executar instaladores reais.
+
+  Produção
+  Uso real em máquinas do desenvolvedor ou servidores selecionados. Nunca instalar tudo por padrão. Sempre preservar dados e configurações.
+
+  Build
+  Desenvolvimento
+  Não há build compilado na primeira versão. O build é validação de scripts, testes e empacotamento Git.
+
+  Build
+  CI executa smoke/contract tests. Futuramente pode gerar release tarball ou binário.
+
+  Testes
+  `tests/smoke.sh`, `tests/contracts.sh`, `bash -n` e futuras validações em ambiente limpo.
+
+  Deploy
+  Deploy é push para GitHub. Instalação em máquina nova usa comando único baseado em `remote-install.sh` via raw GitHub.
+
+  Banco de Dados
+  Entidades
+  Componentes, perfis, planos, módulos, estado instalado, logs, templates e projetos gerados.
+
+  Relacionamentos
+  Perfis possuem componentes. Componentes possuem dependências. Planos são componentes resolvidos em ordem. Estado referencia componentes e status.
+
+  Migrações
+  Mudanças no formato de `state/installed.yaml` devem preservar leitura de estados antigos ou oferecer migração segura.
+
+  Índices
+  Não aplicável a banco central. Para arquivos YAML, IDs de componentes devem ser únicos.
+
+  Backups
+  Antes de sobrescrever configuração existente, preservar arquivo original ou pular e informar. Volumes Docker nunca devem ser apagados sem confirmação explícita.
+
+  APIs
+  Públicas
+  `remote-install.sh`, `install.sh`, `bin/ai-dev`, comandos CLI e variáveis `RCKIT_REPO_URL`, `RCKIT_INSTALL_DIR`, `AI_DEV_YES`, `AI_DEV_DRY_RUN`.
+
+  Privadas
+  Funções internas em `lib/*.sh` e contrato de módulos.
+
+  Internas
+  Manifesto, perfis, resolver de dependências, renderer de plano, runtime de lifecycle, scaffold generator, estado e logs.
+
+  Externas
+  GitHub raw, Git remote, apt-get, npm, pip, Docker, OpenCode/OpenSpec/MCPs quando selecionados.
+
+  Integrações
+  APIs
+  GitHub e serviços externos somente por módulos selecionados.
+
+  Webhooks
+  Não utilizados na primeira versão.
+
+  Filas
+  Não utilizadas na primeira versão.
+
+  Serviços Externos
+  GitHub para distribuição e possíveis MCPs/serviços como Sentry e Firecrawl quando selecionados.
+
+  Segurança
+  Autenticação
+  Delegada a serviços externos quando necessário.
+
+  Autorização
+  Menor privilégio, confirmação para sudo/destrutivo, permissões OpenCode conservadoras.
+
+  Permissões
+  MCPs e comandos de agente devem pedir autorização por padrão. Não conceder acesso irrestrito.
+
+  Auditoria
+  Logs locais e estado version-free.
+
+  Criptografia
+  Não implementar criptografia própria. Usar mecanismos oficiais de cada ferramenta/serviço.
+
+  Rate Limit
+  Relevante para MCPs/API externas; documentar por integração quando implementada de verdade.
+
+  Logs
+  Sem secrets, com timestamp e componente.
+
+  Módulos do Sistema
+  Core
+  cli
+  manifest-resolver
+  lifecycle-runtime
+
+  módulo-core-1
+  `bin/ai-dev` para roteamento de comandos.
+
+  módulo-core-2
+  `lib/catalog.sh` para manifesto, perfis e dependências.
+
+  módulo-core-3
+  `lib/runtime.sh` para lifecycle idempotente.
+
+  Autenticação
+  login
+  Não há login próprio; usar `gh auth login` ou fluxo oficial da integração quando necessário.
+
+  cadastro
+  Não aplicável.
+
+  recuperação-de-senha
+  Não aplicável.
+
+  perfil
+  Perfis de instalação: developer, server, fullstack, ai, seo e full.
+
+  permissões
+  Permissões locais por confirmação e permissões OpenCode/MCP conservadoras.
+
+  Administração
+  usuários
+  Não aplicável.
+
+  grupos
+  Não aplicável.
+
+  permissões
+  Configuração de sudo, Docker group e permissões de agente somente quando necessárias.
+
+  configurações
+  `config/manifest.yaml`, `config/profiles.yaml`, templates e variáveis de ambiente.
+
+  auditoria
+  `logs/*.log` e `state/installed.yaml`.
+
+  logs
+  Logs por comando e `error.log`.
+
+  Cadastros
+  cadastro-1
+  Cadastro de componentes no manifesto.
+
+  cadastro-2
+  Cadastro de perfis.
+
+  cadastro-3
+  Cadastro de templates.
+
+  cadastro-4
+  Cadastro de skills.
+
+  Operações
+  operação-1
+  Instalar componentes selecionados.
+
+  operação-2
+  Atualizar componentes selecionados.
+
+  operação-3
+  Verificar ambiente.
+
+  operação-4
+  Diagnosticar problemas com doctor.
+
+  Financeiro
+  financeiro-1
+  Não aplicável.
+
+  financeiro-2
+  Não aplicável.
+
+  Comunicação
+  notificações
+  Saída CLI e logs.
+
+  emails
+  Não aplicável.
+
+  mensagens
+  Mensagens CLI acionáveis.
+
+  webhooks
+  Não aplicável na primeira versão.
+
+  Relatórios
+  dashboard
+  Não há dashboard web; `ai-dev verify` funciona como relatório local.
+
+  indicadores
+  Status READY/UNHEALTHY, componentes OK/FAIL e achados do doctor.
+
+  exportações
+  Logs e saída textual.
+
+  Plataforma
+  uploads
+  Não aplicável.
+
+  arquivos
+  Templates, configs, scripts e projetos gerados.
+
+  busca
+  Não aplicável na primeira versão.
+
+  importação
+  Leitura de manifesto, perfis e estado.
+
+  exportação
+  Geração de projeto por `ai-dev new`.
+
+  Integrações
+  integração-1
+  GitHub para distribuição por clone/pull.
+
+  integração-2
+  OpenCode + OpenSpec para workflow de desenvolvimento com IA.
+
+  integração-3
+  MCPs opcionais selecionados individualmente.
+
+  Configurações
+  preferências
+  Perfis e seleção manual de componentes.
+
+  temas
+  Não aplicável.
+
+  idiomas
+  Português na documentação principal; comandos em inglês.
+
+  Analytics
+  métricas
+  Não coletar telemetria externa na primeira versão.
+
+  eventos
+  Eventos locais nos logs.
+
+  monitoramento
+  `verify`, `doctor` e logs.
+
+  Conhecimento caro e armadilhas encontradas
+  - O nome do repositório `rckit` não deve virar o nome do projeto gerado. Projeto novo sempre recebe nome explícito via `ai-dev new <nome>` ou `remote-install.sh -- --new <nome>`.
+  - O usuário quer rodar um comando único. Manter `remote-install.sh` como fluxo principal para instalar git, clonar/atualizar o repo, aplicar permissões e delegar argumentos.
+  - `--dry-run` nunca pode escrever em `$HOME`, criar configs reais, instalar pacotes, alterar Docker ou exigir verificação final de uma instalação simulada.
+  - Em Bash, variáveis globais de módulo podem vazar entre componentes. O runtime deve limpar `AI_DEV_MODULE_NAME`, `AI_DEV_MODULE_BINARY` e `AI_DEV_MODULE_APT_PACKAGES` antes de carregar cada módulo.
+  - `ai-dev install` sem argumentos não deve selecionar tudo automaticamente. Em terminal interativo, pedir seleção; sem terminal, exigir componentes ou `--profile`.
+  - Estado local e logs devem ser ignorados pelo Git.
+  - A pasta `.git` do workspace Codex pode estar montada como read-only; para publicar, foi usado repositório temporário em `/tmp`. Não assumir que o workspace local é um repo Git gravável.
+  - O repositório remoto já tinha um README inicial; integrar histórico remoto antes de push para evitar sobrescrever.
+  - OpenCode possui diferenças de configuração entre versões: v1 usa `permission`, v2 usa `permissions`. Template atual usa defaults conservadores compatíveis com v1 até fixar alvo de versão.
+  - OpenCode v2 pode instalar como `opencode2`; não assumir que substitui binário `opencode`.
+  - MCPs consomem contexto e podem exigir credenciais ou escopos amplos. Devem permanecer opt-in e com contexto/permissões visíveis no plano.
+  - GitHub MCP pode usar token local; nunca escrever `GITHUB_PERSONAL_ACCESS_TOKEN` ou similares em arquivos versionados.
+  - Playwright MCP requer Node.js 20+.
+  - Chrome DevTools MCP expõe conteúdo do navegador ao agente; manter opt-in.
+  - Firecrawl MCP exige API key; manter opt-in e secret-safe.
+
+rules:
+  proposal:
+    - "Manter a proposta objetiva."
+    - "Explicar o problema antes da solução."
+    - "Evitar detalhes de implementação."
+    - "Listar módulos afetados."
+    - "Informar BREAKING CHANGES quando existirem."
+    - "Usar dados reais do AI DEV BOOTSTRAP/rckit, não placeholders genéricos."
+  design:
+    - "Documentar decisões arquiteturais."
+    - "Documentar impactos no banco de dados."
+    - "Documentar impactos nas APIs."
+    - "Documentar impactos na arquitetura."
+    - "Explicar alternativas consideradas."
+    - "Listar riscos."
+    - "Listar mitigação para cada risco."
+    - "Preservar armadilhas já aprendidas no projeto."
+  specs:
+    - "Escrever requisitos em português."
+    - "Organizar requisitos por módulo."
+    - "Cada requisito deve possuir cenário testável."
+    - "Utilizar MUST, SHOULD e MAY quando apropriado."
+    - "Evitar ambiguidades."
+    - "Transformar cada requisito em comportamento verificável pela CLI, testes ou documentação."
+  tasks:
+    - "Dividir tarefas em pequenas entregas."
+    - "Respeitar dependências."
+    - "Criar checklist de implementação."
+    - "Criar checklist de testes."
+    - "Criar checklist de documentação."
+    - "Finalizar com deploy."
+    - "Finalizar com validação da aplicação."
+    - "Finalizar com limpeza de cache."
+    - "Finalizar com revisão geral do projeto."
+    - "Não marcar tarefa como concluída quando houver apenas placeholder sem comportamento verificável."
