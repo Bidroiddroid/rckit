@@ -1,11 +1,13 @@
-# Components
+# Componentes
 
-Components are registered in `config/manifest.yaml`.
+Os componentes são registrados em `config/manifest.yaml`, resolvidos por dependência e implementados em `modules/`. Consulte `docs/component-inventory.md` para o resultado verificável de cada item.
 
-To add a component:
+Para adicionar um componente:
 
-1. Create `modules/<component>/module.sh`.
-2. Implement `detect`, `install`, `configure`, `verify`, `update`, `remove`, and `doctor` through the standard module contract.
-3. Register the component in `config/manifest.yaml`.
-4. Add it to profiles only when it is a useful default for that profile.
-5. Add tests for dependency resolution and lifecycle behavior.
+1. Defina se ele instala uma CLI do host, configura um MCP ou gera um serviço Compose.
+2. Crie `modules/<component>/module.sh` com instalação, configuração, verificação, atualização, remoção e diagnóstico reais.
+3. Registre categoria, dependências, plataformas, credenciais e custo de contexto no manifesto.
+4. Inclua o componente em perfil somente quando ele for um padrão útil.
+5. Adicione testes de resolução, dry-run, idempotência, falha e verificação específica.
+
+Operações sem implementação não podem retornar sucesso. A presença de uma dependência, como Docker, não comprova que PostgreSQL ou outro serviço foi configurado.

@@ -17,7 +17,9 @@ log_line() {
   local line
   line="$(printf '%s [%s] %s' "$(ai_dev_timestamp)" "$level" "$message")"
   printf '%s\n' "$line"
-  printf '%s\n' "$line" >>"$(log_file_for "${AI_DEV_COMMAND:-ai-dev}")"
+  if [[ "${AI_DEV_DRY_RUN:-0}" != "1" ]]; then
+    printf '%s\n' "$line" >>"$(log_file_for "${AI_DEV_COMMAND:-ai-dev}")"
+  fi
 }
 
 log_info() {
@@ -30,7 +32,9 @@ log_warn() {
 
 log_error() {
   log_line ERROR "$@" >&2
-  printf '%s [%s] %s\n' "$(ai_dev_timestamp)" ERROR "$*" >>"$(log_file_for error)"
+  if [[ "${AI_DEV_DRY_RUN:-0}" != "1" ]]; then
+    printf '%s [%s] %s\n' "$(ai_dev_timestamp)" ERROR "$*" >>"$(log_file_for error)"
+  fi
 }
 
 die() {

@@ -38,7 +38,8 @@ test -f "$ROOT_DIR/templates/openspec/README.md"
 test -f "$ROOT_DIR/templates/openspec/changes/.gitkeep"
 test -f "$ROOT_DIR/templates/openspec/specs/.gitkeep"
 test -f "$ROOT_DIR/skills/code-review/SKILL.md"
-test -f "$ROOT_DIR/skills/mcp-setup/SKILL.md"
+  test -f "$ROOT_DIR/skills/mcp-setup/SKILL.md"
+test -f "$ROOT_DIR/.codex/skills/openspec-propose/SKILL.md"
 test "$(wc -l <"$ROOT_DIR/templates/openspec/config.yaml")" -gt 200
 if rg -n "ghp_|github_pat_|sk-[A-Za-z0-9]|xox[baprs]-|AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z_-]{35}|postgres://[^{}[:space:]]+:[^{}[:space:]]+@" "$ROOT_DIR/templates/opencode" "$ROOT_DIR/templates/openspec"; then
   echo "real-looking secret found in templates" >&2
@@ -56,9 +57,14 @@ grep -q "credentials: true" /tmp/ai-dev-contract-mcp.out
 
 AI_DEV_YES=1 AI_DEV_DRY_RUN=1 "$ROOT_DIR/bin/ai-dev" remove postgresql >/tmp/ai-dev-contract-remove.out
 grep -q "Destructive guard" /tmp/ai-dev-contract-remove.out
+! grep -q ' - system ' /tmp/ai-dev-contract-remove.out
+! grep -q ' - docker ' /tmp/ai-dev-contract-remove.out
 
-"$ROOT_DIR/bin/ai-dev" verify python >/tmp/ai-dev-contract-verify.out
-grep -q "Environment:" /tmp/ai-dev-contract-verify.out
+if "$ROOT_DIR/bin/ai-dev" verify python >/tmp/ai-dev-contract-verify.out; then
+  grep -q "Environment: READY" /tmp/ai-dev-contract-verify.out
+else
+  grep -q "Environment: UNHEALTHY" /tmp/ai-dev-contract-verify.out
+fi
 
 "$ROOT_DIR/bin/ai-dev" doctor docker >/tmp/ai-dev-contract-doctor.out
 grep -q "Docker" /tmp/ai-dev-contract-doctor.out
@@ -67,6 +73,17 @@ grep -q "Docker" /tmp/ai-dev-contract-doctor.out
 grep -q "mcp-github" /tmp/ai-dev-contract-mcp-doctor.out
 grep -q "GITHUB_PERSONAL_ACCESS_TOKEN" /tmp/ai-dev-contract-mcp-doctor.out
 grep -q "MCP server" /tmp/ai-dev-contract-mcp-doctor.out
+
+state_root="$(mktemp -d)"
+(
+  AI_DEV_ROOT="$state_root"
+  source "$ROOT_DIR/lib/logging.sh"
+  source "$ROOT_DIR/lib/state.sh"
+  state_mark git installed 1
+  state_mark git updated 2
+  test "$(rg -c '^  git:$' "$state_root/state/installed.yaml")" -eq 1
+  rg -q 'version: "2"' "$state_root/state/installed.yaml"
+)
 
 if "$ROOT_DIR/bin/ai-dev" verify mcp-github >/tmp/ai-dev-contract-mcp-verify.out 2>&1; then
   if ! grep -q "Environment: READY" /tmp/ai-dev-contract-mcp-verify.out; then
@@ -81,13 +98,16 @@ tmpdir="$(mktemp -d)"
 tmpbin="$tmpdir/bin"
 tmphome="$tmpdir/home"
 mkdir -p "$tmpbin" "$tmphome"
-printf '#!/usr/bin/env bash\nprintf "v20.0.0\\n"\n' >"$tmpbin/node"
+printf '#!/usr/bin/env bash\nif [[ "${1:-}" == "-p" ]]; then printf "20.19.0\\n"; else printf "v20.19.0\\n"; fi\n' >"$tmpbin/node"
 printf '#!/usr/bin/env bash\nexit 0\n' >"$tmpbin/npm"
 printf '#!/usr/bin/env bash\nexit 0\n' >"$tmpbin/npx"
+printf '#!/usr/bin/env bash\nexit 0\n' >"$tmpbin/pnpm"
+printf '#!/usr/bin/env bash\nexit 0\n' >"$tmpbin/tsc"
+printf '#!/usr/bin/env bash\nexit 0\n' >"$tmpbin/corepack"
 printf '#!/usr/bin/env bash\nexit 0\n' >"$tmpbin/opencode"
 printf '#!/usr/bin/env bash\nexit 0\n' >"$tmpbin/mise"
 printf '#!/usr/bin/env bash\nexit 0\n' >"$tmpbin/google-chrome"
-chmod +x "$tmpbin/node" "$tmpbin/npm" "$tmpbin/npx" "$tmpbin/opencode" "$tmpbin/mise" "$tmpbin/google-chrome"
+chmod +x "$tmpbin/node" "$tmpbin/npm" "$tmpbin/npx" "$tmpbin/pnpm" "$tmpbin/tsc" "$tmpbin/corepack" "$tmpbin/opencode" "$tmpbin/mise" "$tmpbin/google-chrome"
 (
   PATH="$tmpbin:$PATH"
   HOME="$tmphome"
@@ -124,12 +144,19 @@ for name in expected:
     if servers[name].get("enabled") is not True:
         raise SystemExit(f"MCP config is not explicitly enabled: {name}")
 PY
+
+for service in postgresql redis mysql traefik portainer; do
+  test -f "$ROOT_DIR/templates/services/$service.compose.yml"
+  grep -q '^services:' "$ROOT_DIR/templates/services/$service.compose.yml"
+done
 (
   cd "$tmpdir"
   "$ROOT_DIR/bin/ai-dev" new agent-check --stack node --yes >/tmp/ai-dev-contract-agent-new.out
   grep -q "OpenSpec" agent-check/AGENTS.md
   grep -q "MCP Usage" agent-check/AGENTS.md
   grep -q "Never commit" agent-check/AGENTS.md
+  test -f agent-check/opencode.json
+  test -f agent-check/.opencode/skills/openspec-apply-change/SKILL.md
   ! grep -R "{{PROJECT_NAME}}" agent-check
 )
 

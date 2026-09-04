@@ -1,113 +1,107 @@
 # AI DEV BOOTSTRAP
 
-AI DEV BOOTSTRAP is a GitHub-friendly bootstrap repository for preparing a new development machine or starting a new system with only the tools you choose.
+O rckit prepara máquinas Ubuntu, Debian e WSL2 Ubuntu e cria projetos com somente os componentes escolhidos. `rckit` é o nome da ferramenta; cada sistema gerado recebe o nome informado por você.
 
-It is designed for Ubuntu, Debian, and WSL2 Ubuntu first. The first implementation is shell-first, modular, and manifest-driven so new tools can be added without rewriting the CLI.
+## Instalação com um comando
 
-## Quick Start
-
-```bash
-wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh | bash -s -- --profile developer --dry-run
-```
-
-Use `--dry-run` first to review what would happen. Remove it only after reviewing the plan.
-
-The repository folder is only the bootstrap tool. Your project name is chosen separately when you create a project:
-
-```bash
-wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh | bash -s -- --new meu-projeto --stack node
-```
-
-To generate project files inside the current directory, use `.` as the project path:
-
-```bash
-wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh | bash -s -- --new . --stack node
-```
-
-If a project was created before the OpenSpec/OpenCode templates were completed, generate missing files again from inside that project:
-
-```bash
-cd meu-projeto
-wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh | bash -s -- --new . --stack node
-```
-
-Existing files are preserved. To replace an old minimal file, move it first, for example:
-
-```bash
-mv openspec/config.yaml openspec/config.yaml.old
-wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh | bash -s -- --new . --stack node
-```
-
-The one-line installer stores the bootstrap repository at `~/.local/share/rckit` by default. Change that location with `RCKIT_INSTALL_DIR`.
-
-## Install From GitHub
-
-On any supported machine:
+Para abrir a seleção por caixas marcáveis:
 
 ```bash
 wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh | bash -s --
 ```
 
-Running without components or `--profile` opens the interactive component selection. If `dialog` is available, you can click the checkbox with the mouse; Space also marks `[x]`, and Enter continues.
+Use setas e Espaço para marcar `[x]`, ou clique quando o terminal oferecer suporte a mouse. Enter confirma. A instalação pode pedir a senha do `sudo` para pacotes do sistema.
 
-The bootstrap folder is not the generated project name. Project names are passed to `--new`.
-
-If the command returns to the prompt without output, test the download directly:
-
-```bash
-wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh
-```
-
-To install only one component:
-
-```bash
-wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh | bash -s -- python --dry-run
-```
-
-To use a profile:
-
-```bash
-wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh | bash -s -- --profile ai --dry-run
-```
-
-## Common Commands
+Para revisar um perfil sem alterar o ambiente:
 
 ```bash
 wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh | bash -s -- --profile developer --dry-run
-wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh | bash -s -- python --dry-run
-wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh | bash -s -- --profile ai --dry-run
+```
+
+Para instalar um componente específico:
+
+```bash
+wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh | bash -s -- python
+```
+
+## Criar um projeto
+
+Criar uma pasta com o nome escolhido:
+
+```bash
 wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh | bash -s -- --new meu-projeto --stack node
 ```
 
-## Profiles
-
-- `developer`: Git, GitHub CLI, Make, jq, yq, ripgrep, fd, mise.
-- `server`: Docker, Compose, Traefik, Portainer, PostgreSQL, Redis.
-- `fullstack`: Node.js, Python, PHP/Laravel, Docker, PostgreSQL, Redis.
-- `ai`: OpenCode, OpenSpec, and selected MCPs.
-- `seo`: Node/Python plus optional crawler-oriented tooling.
-- `full`: broad development environment.
-
-Profiles are shortcuts. You can always install one component at a time.
-
-## MCPs
-
-MCP components are opt-in. When selected, the installer merges the selected server into:
+Criar ou completar os arquivos dentro da pasta atual:
 
 ```bash
-~/.config/opencode/opencode.json -> mcp.<server-name>
+wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh | bash -s -- --new . --stack node
 ```
 
-Remote MCPs such as Context7, GitHub, and Sentry do not require local `npx`. Local MCPs such as Playwright, PostgreSQL, Chrome DevTools, and Firecrawl use `npx` and require Node.js. MCPs with external credentials read tokens from environment variables instead of tracked files:
+Stacks disponíveis: `node`, `python` e `laravel`. Arquivos personalizados são preservados. Configurações antigas reconhecidas recebem backup `.old.<data>` antes da regeneração.
+
+O projeto inclui `AGENTS.md`, `opencode.json` na raiz, skills em `.opencode/skills/`, `openspec/config.yaml`, `openspec/changes/`, `openspec/specs/`, README, `.env.example`, `.gitignore`, testes e Compose da stack.
+
+## Comando local
+
+O instalador mantém o bootstrap em `~/.local/share/rckit` e cria `~/.local/bin/ai-dev`. Se necessário, habilite esse diretório na sessão:
 
 ```bash
-export GITHUB_PERSONAL_ACCESS_TOKEN=...
-export DATABASE_URL=...
-export FIRECRAWL_API_KEY=...
+export PATH="$HOME/.local/bin:$PATH"
 ```
 
-Run `ai-dev doctor mcp-github mcp-postgresql mcp-firecrawl` after configuring credentials.
+Comandos principais:
 
-## Safety
+```bash
+ai-dev list
+ai-dev install python --dry-run
+ai-dev install --profile ai --dry-run
+ai-dev verify
+ai-dev doctor
+ai-dev new meu-projeto --stack node
+```
 
-The tool shows a plan before changes, keeps MCPs opt-in, avoids writing secrets to tracked files, and preserves Docker volumes and existing configuration unless you explicitly confirm a destructive action.
+Use `RCKIT_INSTALL_DIR` para mudar o clone local e `RCKIT_REPO_URL` para testar outro remote.
+
+## Perfis
+
+- `developer`: Git, GitHub CLI, Make, jq, yq, ripgrep, fd e mise.
+- `server`: Docker, Compose e configurações locais de Traefik, Portainer, PostgreSQL e Redis.
+- `fullstack`: Node, Python, PHP/Laravel, Docker, PostgreSQL e Redis.
+- `ai`: OpenCode estável, OpenSpec, Context7, GitHub MCP e Playwright MCP.
+- `seo`: Node, Python e Firecrawl MCP.
+- `full`: conjunto amplo; revise com `--dry-run` antes de instalar.
+
+PostgreSQL, Redis, MySQL, Traefik e Portainer criam arquivos em `~/.config/rckit/services/<componente>/compose.yml`. Eles não são iniciados automaticamente. O comando exato para iniciar aparece em `ai-dev doctor <componente>`.
+
+## MCPs e credenciais
+
+MCPs são opcionais e são mesclados em `~/.config/opencode/opencode.json`, preservando as outras chaves.
+
+- Sem credencial: Context7 e Playwright. Chrome DevTools também não usa credencial, mas exige Chrome/Chromium.
+- `mcp-github`: `GITHUB_PERSONAL_ACCESS_TOKEN`.
+- `mcp-postgresql`: `DATABASE_URL`.
+- `mcp-firecrawl`: `FIRECRAWL_API_KEY`.
+- `mcp-sentry`: autorização OAuth no primeiro uso.
+
+```bash
+ai-dev doctor mcp-context7 mcp-playwright mcp-chrome-devtools
+ai-dev doctor mcp-github mcp-postgresql mcp-sentry mcp-firecrawl
+```
+
+Tokens nunca são gravados pelo rckit em arquivos versionados ou logs.
+
+## Segurança e limites
+
+`--dry-run` não instala pacotes nem grava configuração, estado persistente ou projeto. Remoções pedem confirmação e preservam projetos, credenciais e volumes Docker. O acesso à rede, disponibilidade de repositórios oficiais, autenticação externa e reinício da sessão para grupos/PATH continuam dependências da máquina.
+
+Consulte [componentes](docs/components.md), [inventário verificável](docs/component-inventory.md), [fontes oficiais](docs/official-sources.md) e [segurança](docs/safety.md).
+
+## Desenvolvimento
+
+```bash
+tests/audit.sh
+tests/contracts.sh
+tests/smoke.sh
+tests/integration.sh
+```

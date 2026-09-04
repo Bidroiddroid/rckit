@@ -14,6 +14,8 @@ module_configure() {
 module_verify() {
   mcp_verify_configured chrome-devtools && mcp_require_npx && mcp_require_chrome
 }
+module_update() { mcp_update_server chrome-devtools; }
+module_remove() { mcp_remove_server chrome-devtools; }
 
 module_doctor() {
   mcp_doctor_common "$1" "" chrome-devtools

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 mcp_require_opencode() {
-  if command_exists opencode || command_exists opencode2; then
+  if command_exists opencode; then
     return 0
   fi
   return 1
@@ -126,4 +126,31 @@ mcp_verify_configured() {
 
 mcp_install_config_only() {
   log_info "$1 uses OpenCode MCP configuration; no separate package install is required."
+}
+
+mcp_update_server() {
+  mcp_configure_server "$1"
+}
+
+mcp_remove_server() {
+  local name="$1" config tmp
+  config="$(mcp_config_path)"
+  [[ -f "$config" ]] || return 0
+  confirm_destructive "remove $name MCP configuration (credentials are untouched)"
+  if [[ "${AI_DEV_DRY_RUN:-0}" == "1" ]]; then
+    log_info "Dry-run would remove $name from $config"
+    return 0
+  fi
+  tmp="$(mktemp)"
+  python3 - "$config" "$name" >"$tmp" <<'PY'
+import json
+import sys
+
+with open(sys.argv[1], "r", encoding="utf-8") as fh:
+    config = json.load(fh)
+config.setdefault("mcp", {}).pop(sys.argv[2], None)
+json.dump(config, sys.stdout, indent=2, ensure_ascii=False)
+sys.stdout.write("\n")
+PY
+  mv "$tmp" "$config"
 }

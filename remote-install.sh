@@ -55,6 +55,26 @@ sync_repository() {
   fi
 }
 
+install_launcher() {
+  local bin_dir="$HOME/.local/bin"
+  local launcher="$bin_dir/ai-dev"
+  if [[ " $* " == *" --dry-run "* ]]; then
+    echo "Dry-run: launcher would be installed at $launcher"
+    return 0
+  fi
+  mkdir -p "$bin_dir"
+  if [[ -e "$launcher" && ! -L "$launcher" ]]; then
+    echo "Existing launcher preserved: $launcher" >&2
+  else
+    ln -sfn "$INSTALL_DIR/bin/ai-dev" "$launcher"
+    echo "Command installed: $launcher"
+  fi
+  case ":$PATH:" in
+    *":$bin_dir:"*) ;;
+    *) echo "Add ~/.local/bin to PATH, then restart the shell: export PATH=\"\$HOME/.local/bin:\$PATH\"" ;;
+  esac
+}
+
 main() {
   echo "AI DEV BOOTSTRAP remote installer"
   echo "Repository: $REPO_URL"
@@ -63,6 +83,7 @@ main() {
   install_dialog_if_interactive "$@"
   sync_repository
   chmod +x "$INSTALL_DIR/install.sh" "$INSTALL_DIR/bin/ai-dev"
+  install_launcher "$@"
   echo "Running: $INSTALL_DIR/install.sh $*"
   if [[ $# -eq 0 && ! -t 0 && -r /dev/tty ]]; then
     exec < /dev/tty

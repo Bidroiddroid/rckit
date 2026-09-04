@@ -5,7 +5,7 @@ AI_DEV_MODULE_APT_PACKAGES=(docker.io)
 source "$AI_DEV_ROOT/lib/module-default.sh"
 
 module_verify() {
-  command_exists docker && docker info >/dev/null 2>&1
+  command_exists docker && docker --version >/dev/null 2>&1
 }
 
 module_doctor() {

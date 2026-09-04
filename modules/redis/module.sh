@@ -4,5 +4,10 @@ AI_DEV_MODULE_BINARY="docker"
 source "$AI_DEV_ROOT/lib/module-default.sh"
 
 module_verify() {
-  command_exists docker
+  service_verify redis
 }
+module_install() { service_install redis; }
+module_configure() { return 0; }
+module_update() { service_update redis; }
+module_remove() { service_remove redis; }
+module_doctor() { service_doctor redis; }

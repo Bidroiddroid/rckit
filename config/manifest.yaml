@@ -148,7 +148,7 @@ components:
     context_cost: medium
   openspec:
     category: ai
-    dependencies: [git]
+    dependencies: [git, node]
     module: modules/openspec
     platforms: [ubuntu, debian, wsl2-ubuntu]
     credentials: false
@@ -204,21 +204,21 @@ components:
     context_cost: high
   gitleaks:
     category: security
-    dependencies: [git]
+    dependencies: [git, mise]
     module: modules/security/gitleaks
     platforms: [ubuntu, debian, wsl2-ubuntu]
     credentials: false
     context_cost: low
   trivy:
     category: security
-    dependencies: [docker]
+    dependencies: [mise]
     module: modules/security/trivy
     platforms: [ubuntu, debian, wsl2-ubuntu]
     credentials: false
     context_cost: low
   semgrep:
     category: security
-    dependencies: [python]
+    dependencies: [python, mise]
     module: modules/security/semgrep
     platforms: [ubuntu, debian, wsl2-ubuntu]
     credentials: false

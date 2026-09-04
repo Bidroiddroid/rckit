@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-AI_DEV_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+AI_DEV_ENTRY="$(readlink -f "${BASH_SOURCE[0]}")"
+AI_DEV_ROOT="$(cd "$(dirname "$AI_DEV_ENTRY")/.." && pwd)"
 export AI_DEV_ROOT
+export PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:$HOME/.config/composer/vendor/bin:$PATH"
 
 source "$AI_DEV_ROOT/lib/logging.sh"
 source "$AI_DEV_ROOT/lib/platform.sh"
@@ -11,6 +13,7 @@ source "$AI_DEV_ROOT/lib/prompts.sh"
 source "$AI_DEV_ROOT/lib/state.sh"
 source "$AI_DEV_ROOT/lib/security.sh"
 source "$AI_DEV_ROOT/lib/mcp.sh"
+source "$AI_DEV_ROOT/lib/service.sh"
 source "$AI_DEV_ROOT/lib/catalog.sh"
 source "$AI_DEV_ROOT/lib/runtime.sh"
 source "$AI_DEV_ROOT/lib/scaffold.sh"
@@ -82,7 +85,13 @@ run_planned_action() {
     mapfile -t selected < <(prompt_select_components)
   fi
   [[ ${#selected[@]} -gt 0 ]] || die "No components selected."
-  mapfile -t AI_DEV_PLAN < <(catalog_resolve "${selected[@]}")
+  if [[ "$action" == "remove" ]]; then
+    local component
+    for component in "${selected[@]}"; do catalog_component_exists "$component"; done
+    AI_DEV_PLAN=("${selected[@]}")
+  else
+    mapfile -t AI_DEV_PLAN < <(catalog_resolve "${selected[@]}")
+  fi
   plan_render "$action" "${AI_DEV_PLAN[@]}"
   if [[ "${AI_DEV_DRY_RUN:-0}" == "1" ]]; then
     log_info "Dry-run complete; no changes made"

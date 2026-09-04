@@ -10,8 +10,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Make scripts executable
-        run: chmod +x install.sh bin/ai-dev tests/smoke.sh tests/contracts.sh
+        run: chmod +x install.sh remote-install.sh bin/ai-dev tests/*.sh
+      - name: Audit scripts and catalog
+        run: tests/audit.sh
       - name: Run smoke tests
         run: tests/smoke.sh
       - name: Run contract tests
         run: tests/contracts.sh
+      - name: Run isolated integration tests
+        run: tests/integration.sh
+
+  clean-environment:
+    strategy:
+      matrix:
+        image: [ubuntu:24.04, debian:12]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate in clean distribution
+        run: |
+          docker run --rm -e DEBIAN_FRONTEND=noninteractive -e TZ=Etc/UTC -v "$PWD:/workspace:ro" "${{ matrix.image }}" bash -lc '
+            apt-get update >/dev/null &&
+            apt-get install -y bash git curl python3 ripgrep >/dev/null &&
+            cd /workspace &&
+            bash tests/audit.sh &&
+            AI_DEV_DRY_RUN=1 AI_DEV_YES=1 bash bin/ai-dev install --profile developer
+          '

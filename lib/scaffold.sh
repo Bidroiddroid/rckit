@@ -32,7 +32,7 @@ scaffold_new() {
     project_name="$(basename "$PWD")"
   else
     target="$name"
-    project_name="$name"
+    project_name="$(basename "$name")"
   fi
   if [[ -e "$target" ]]; then
     confirm "Project path exists. Write missing files into $target?" || die "Project creation cancelled"
@@ -43,11 +43,32 @@ scaffold_new() {
   scaffold_write "$target/.env.example" "$AI_DEV_ROOT/templates/project/base/env.example" "$project_name"
   scaffold_write "$target/.gitignore" "$AI_DEV_ROOT/templates/project/base/gitignore" "$project_name"
   scaffold_write "$target/docker-compose.yml" "$AI_DEV_ROOT/templates/project/$stack/docker-compose.yml" "$project_name"
-  scaffold_write "$target/.opencode/opencode.json" "$AI_DEV_ROOT/templates/opencode/opencode.json" "$project_name"
+  scaffold_migrate_opencode_config "$target"
+  scaffold_write "$target/opencode.json" "$AI_DEV_ROOT/templates/opencode/opencode.json" "$project_name"
   scaffold_write "$target/openspec/config.yaml" "$AI_DEV_ROOT/templates/openspec/config.yaml" "$project_name"
   scaffold_copy_tree "$target/.opencode/skills" "$AI_DEV_ROOT/skills" "$project_name"
+  scaffold_copy_openspec_skills "$target/.opencode/skills"
   scaffold_copy_tree "$target/openspec" "$AI_DEV_ROOT/templates/openspec" "$project_name"
   log_info "Created project scaffold: $target ($stack, project: $project_name)"
+}
+
+scaffold_migrate_opencode_config() {
+  local target="$1" legacy="$target/.opencode/opencode.json"
+  [[ -f "$legacy" || -f "$target/opencode.json" ]] || return 0
+  if [[ -f "$legacy" && ! -f "$target/opencode.json" ]]; then
+    cp "$legacy" "$target/opencode.json"
+    log_warn "Migrated legacy OpenCode project config to $target/opencode.json; preserved $legacy"
+  fi
+}
+
+scaffold_copy_openspec_skills() {
+  local dest="$1" src="$AI_DEV_ROOT/.codex/skills" skill name
+  [[ -d "$src" ]] || return 0
+  for skill in "$src"/openspec-*; do
+    [[ -d "$skill" ]] || continue
+    name="$(basename "$skill")"
+    scaffold_copy_tree "$dest/$name" "$skill" ""
+  done
 }
 
 scaffold_should_refresh() {
@@ -57,7 +78,7 @@ scaffold_should_refresh() {
       grep -q "schema: spec-driven" "$dest" && grep -q "Conhecimento caro" "$dest" && return 1
       return 0
       ;;
-    */.opencode/opencode.json)
+    */opencode.json|*/.opencode/opencode.json)
       python3 -m json.tool "$dest" >/dev/null 2>&1 && grep -q '"agent"' "$dest" && grep -q '"mcp"' "$dest" && return 1
       return 0
       ;;
@@ -67,6 +88,7 @@ scaffold_should_refresh() {
 
 scaffold_write() {
   local dest="$1" src="$2" project_name="$3"
+  local replacement
   [[ -f "$src" ]] || die "Missing template: $src"
   if [[ -e "$dest" ]]; then
     if scaffold_should_refresh "$dest"; then
@@ -80,7 +102,10 @@ scaffold_write() {
     fi
   fi
   mkdir -p "$(dirname "$dest")"
-  sed "s/{{PROJECT_NAME}}/$project_name/g" "$src" >"$dest"
+  replacement="${project_name//\\/\\\\}"
+  replacement="${replacement//&/\\&}"
+  replacement="${replacement//|/\\|}"
+  sed "s|{{PROJECT_NAME}}|$replacement|g" "$src" >"$dest"
 }
 
 scaffold_copy_tree() {

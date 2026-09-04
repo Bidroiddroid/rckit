@@ -14,6 +14,8 @@ module_configure() {
 module_verify() {
   mcp_verify_configured playwright && mcp_require_npx && mcp_require_node_major 20
 }
+module_update() { mcp_update_server playwright; }
+module_remove() { mcp_remove_server playwright; }
 
 module_doctor() {
   mcp_doctor_common "$1" "" playwright

@@ -14,6 +14,8 @@ module_configure() {
 module_verify() {
   mcp_verify_configured firecrawl && mcp_require_npx && mcp_require_env FIRECRAWL_API_KEY
 }
+module_update() { mcp_update_server firecrawl; }
+module_remove() { mcp_remove_server firecrawl; }
 
 module_doctor() {
   mcp_doctor_common "$1" FIRECRAWL_API_KEY firecrawl

@@ -14,6 +14,8 @@ module_configure() {
 module_verify() {
   mcp_verify_configured context7
 }
+module_update() { mcp_update_server context7; }
+module_remove() { mcp_remove_server context7; }
 
 module_doctor() {
   mcp_doctor_common "$1" "" context7

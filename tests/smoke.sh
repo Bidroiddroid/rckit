@@ -47,7 +47,7 @@ tmpdir="$(mktemp -d)"
   test -f sample/openspec/README.md
   test -f sample/.opencode/skills/code-review/SKILL.md
   test -f sample/.opencode/skills/mcp-setup/SKILL.md
-  python3 -m json.tool sample/.opencode/opencode.json >/tmp/ai-dev-sample-opencode-json.out
+  python3 -m json.tool sample/opencode.json >/tmp/ai-dev-sample-opencode-json.out
   grep -q '"agent"' /tmp/ai-dev-sample-opencode-json.out
   grep -q '"mcp"' /tmp/ai-dev-sample-opencode-json.out
   grep -q '"bash": "ask"' /tmp/ai-dev-sample-opencode-json.out
@@ -62,6 +62,8 @@ tmpdir="$(mktemp -d)"
   test -f custom-name/README.md
   grep -q "custom-name" custom-name/README.md
   grep -q "custom-name" custom-name/openspec/config.yaml
+  "$ROOT_DIR/bin/ai-dev" new "$tmpdir/nested/absolute-name" --stack node --yes >/tmp/ai-dev-new-absolute.out
+  grep -q "absolute-name" "$tmpdir/nested/absolute-name/README.md"
   grep -q "Conhecimento caro" custom-name/openspec/config.yaml
   mkdir current-project
   cd current-project
@@ -73,6 +75,8 @@ tmpdir="$(mktemp -d)"
   test -d openspec/specs
   test -f openspec/README.md
   test -f .opencode/skills/code-review/SKILL.md
+  test -f .opencode/skills/openspec-propose/SKILL.md
+  test -f opencode.json
   grep -q "current-project" README.md
   grep -q "current-project" openspec/config.yaml
   grep -q "schema: spec-driven" openspec/config.yaml
@@ -85,9 +89,10 @@ tmpdir="$(mktemp -d)"
   printf '{"mcp":{}}\n' >.opencode/opencode.json
   "$ROOT_DIR/bin/ai-dev" new . --stack node --yes >/tmp/ai-dev-new-legacy.out
   test -f openspec/config.yaml.old.*
-  test -f .opencode/opencode.json.old.*
+  test -f opencode.json
+  test -f .opencode/opencode.json
   grep -q "Conhecimento caro" openspec/config.yaml
-  grep -q '"agent"' .opencode/opencode.json
+  grep -q '"mcp"' opencode.json
 )
 
 printf 'smoke tests passed\n'

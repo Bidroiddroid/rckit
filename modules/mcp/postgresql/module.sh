@@ -14,6 +14,8 @@ module_configure() {
 module_verify() {
   mcp_verify_configured postgresql && mcp_require_npx && mcp_require_env DATABASE_URL
 }
+module_update() { mcp_update_server postgresql; }
+module_remove() { mcp_remove_server postgresql; }
 
 module_doctor() {
   mcp_doctor_common "$1" DATABASE_URL postgresql

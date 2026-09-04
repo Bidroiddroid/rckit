@@ -1,6 +1,13 @@
 # Official Sources
 
-These sources were checked before adding the initial AI and MCP module placeholders. Real installer hardening must re-check these pages because install commands and configuration schemas can change.
+Estas fontes oficiais foram revisadas em 2026-09-04. Instaladores e schemas externos podem mudar e devem ser conferidos antes de alterar os módulos.
+
+- OpenCode estável: https://opencode.ai/en/docs (instalação `npm install -g opencode-ai`, binário `opencode`). A configuração desta versão mantém servidores diretamente em `mcp`. OpenCode v2 permanece beta, instala `opencode2` e usa `mcp.servers`; os schemas não são misturados.
+- OpenSpec: https://github.com/Fission-AI/OpenSpec/blob/main/docs/installation.md (`npm install -g @fission-ai/openspec@latest`, Node.js 20.19.0+).
+- mise: https://mise.jdx.dev/installing-mise.html (instalador Linux preferido em `https://mise.run`, destino padrão `~/.local/bin/mise`).
+- uv/Ruff: https://docs.astral.sh/uv/getting-started/installation/ e https://docs.astral.sh/ruff/installation/.
+- Docker Engine: https://docs.docker.com/engine/install/ e Compose: https://docs.docker.com/compose/install/linux/.
+- Gitleaks: https://github.com/gitleaks/gitleaks; Trivy: https://trivy.dev/latest/getting-started/installation/; Semgrep: https://semgrep.dev/docs/getting-started/.
 
 ## AI Tooling
 

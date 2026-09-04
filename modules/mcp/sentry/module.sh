@@ -14,6 +14,8 @@ module_configure() {
 module_verify() {
   mcp_verify_configured sentry
 }
+module_update() { mcp_update_server sentry; }
+module_remove() { mcp_remove_server sentry; }
 
 module_doctor() {
   mcp_doctor_common "$1" "" sentry
