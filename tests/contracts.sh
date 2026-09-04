@@ -9,6 +9,12 @@ bash -n "$ROOT_DIR/install.sh" "$ROOT_DIR/bin/ai-dev" "$ROOT_DIR"/lib/*.sh "$ROO
 grep -q "mcp-github" /tmp/ai-dev-contract-list.out
 grep -q "semgrep" /tmp/ai-dev-contract-list.out
 
+tmpbin_fd="$(mktemp -d)"
+printf '#!/usr/bin/env bash\nexit 0\n' >"$tmpbin_fd/fdfind"
+chmod +x "$tmpbin_fd/fdfind"
+PATH="$tmpbin_fd:$PATH" "$ROOT_DIR/bin/ai-dev" verify fd >/tmp/ai-dev-contract-fd.out
+grep -q "Environment: READY" /tmp/ai-dev-contract-fd.out
+
 python3 -m json.tool "$ROOT_DIR/templates/opencode/opencode.json" >/tmp/ai-dev-opencode-json.out
 python3 -m json.tool "$ROOT_DIR/templates/opencode/mcp/context7.json" >/dev/null
 python3 -m json.tool "$ROOT_DIR/templates/opencode/mcp/github.json" >/dev/null

@@ -25,6 +25,21 @@ install_git_if_missing() {
   exit 2
 }
 
+install_dialog_if_interactive() {
+  if (($# > 0)); then
+    return 0
+  fi
+  if need_command dialog; then
+    return 0
+  fi
+  if ! need_command apt-get || ! need_command sudo; then
+    return 0
+  fi
+  echo "Installing dialog for mouse-friendly component selection"
+  sudo apt-get update
+  sudo apt-get install -y dialog
+}
+
 sync_repository() {
   mkdir -p "$(dirname "$INSTALL_DIR")"
   if [[ -d "$INSTALL_DIR/.git" ]]; then
@@ -45,6 +60,7 @@ main() {
   echo "Repository: $REPO_URL"
   echo "Install dir: $INSTALL_DIR"
   install_git_if_missing
+  install_dialog_if_interactive "$@"
   sync_repository
   chmod +x "$INSTALL_DIR/install.sh" "$INSTALL_DIR/bin/ai-dev"
   echo "Running: $INSTALL_DIR/install.sh $*"

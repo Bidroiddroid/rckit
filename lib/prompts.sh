@@ -39,12 +39,41 @@ prompt_select_components() {
     die "No interactive terminal available. Pass components explicitly or use --profile."
   fi
 
+  if command_exists dialog; then
+    prompt_select_components_dialog
+    return 0
+  fi
+
   if command_exists whiptail; then
     prompt_select_components_whiptail
     return 0
   fi
 
   prompt_select_components_keyboard
+}
+
+prompt_select_components_dialog() {
+  local -a items=()
+  local i choices
+  for i in "${!AI_DEV_COMPONENTS[@]}"; do
+    items+=("${AI_DEV_COMPONENTS[$i]}" "${AI_DEV_COMPONENT_CATEGORY[$i]}" "off")
+  done
+
+  if ! choices="$(dialog \
+    --stdout \
+    --separate-output \
+    --mouse \
+    --title "AI DEV BOOTSTRAP" \
+    --checklist "Clique ou use Espaco para marcar [x]. Enter continua." \
+    24 78 16 \
+    "${items[@]}")"; then
+    clear >&2 || true
+    die "Component selection cancelled"
+  fi
+
+  clear >&2 || true
+  [[ -n "$choices" ]] || die "No components selected."
+  printf '%s\n' "$choices"
 }
 
 prompt_select_components_whiptail() {
