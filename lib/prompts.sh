@@ -26,21 +26,25 @@ confirm_destructive() {
 }
 
 prompt_select_components() {
-  if [[ ! -t 0 && "${AI_DEV_ALLOW_STDIN_PROMPT:-0}" != "1" ]]; then
+  if [[ "${AI_DEV_ALLOW_STDIN_PROMPT:-0}" == "1" ]]; then
+    prompt_select_components_numbered
+    return 0
+  fi
+
+  if [[ ! -t 0 && -r /dev/tty ]]; then
+    exec < /dev/tty
+  fi
+
+  if [[ ! -t 0 ]]; then
     die "No interactive terminal available. Pass components explicitly or use --profile."
   fi
 
-  if [[ -t 0 && -t 1 ]] && command_exists whiptail; then
+  if command_exists whiptail; then
     prompt_select_components_whiptail
     return 0
   fi
 
-  if [[ -t 0 && -t 1 ]]; then
-    prompt_select_components_keyboard
-    return 0
-  fi
-
-  prompt_select_components_numbered
+  prompt_select_components_keyboard
 }
 
 prompt_select_components_whiptail() {
@@ -70,8 +74,8 @@ prompt_draw_keyboard_menu() {
   local -a selected=("$@")
   local i mark pointer
   printf '\033[H\033[J' >&2
-  printf 'AI DEV BOOTSTRAP - Select components\n\n' >&2
-  printf 'Use arrows or j/k to move, Space to mark [x], Enter to continue, q to quit.\n\n' >&2
+  printf 'AI DEV BOOTSTRAP - Marque os componentes\n\n' >&2
+  printf 'Setas ou j/k movem, Espaco marca [x], Enter continua, q cancela.\n\n' >&2
   for i in "${!AI_DEV_COMPONENTS[@]}"; do
     mark=" "
     pointer="  "
@@ -90,6 +94,7 @@ prompt_select_components_keyboard() {
   done
 
   printf '\033[?25l' >&2
+  printf 'Interactive checkbox UI: use arrows and Space to mark components.\n' >&2
   while true; do
     prompt_draw_keyboard_menu "$cursor" "${selected[@]}"
     IFS= read -rsn1 key || {
