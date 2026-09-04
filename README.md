@@ -28,6 +28,8 @@ On any supported machine:
 wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh | bash -s --
 ```
 
+Running without components or `--profile` opens the interactive component selection.
+
 The bootstrap folder is not the generated project name. Project names are passed to `--new`.
 
 If the command returns to the prompt without output, test the download directly:
