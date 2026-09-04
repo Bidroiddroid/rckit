@@ -3,6 +3,10 @@ AI_DEV_MODULE_NAME="OpenCode"
 AI_DEV_MODULE_BINARY="opencode"
 source "$AI_DEV_ROOT/lib/module-default.sh"
 
+module_verify() {
+  mcp_require_opencode
+}
+
 module_configure() {
   if [[ "${AI_DEV_DRY_RUN:-0}" == "1" ]]; then
     log_info "Dry-run skipped OpenCode config write"

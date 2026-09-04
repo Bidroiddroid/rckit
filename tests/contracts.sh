@@ -17,7 +17,8 @@ python3 -m json.tool "$ROOT_DIR/templates/opencode/mcp/postgresql.json" >/dev/nu
 python3 -m json.tool "$ROOT_DIR/templates/opencode/mcp/sentry.json" >/dev/null
 python3 -m json.tool "$ROOT_DIR/templates/opencode/mcp/chrome-devtools.json" >/dev/null
 python3 -m json.tool "$ROOT_DIR/templates/opencode/mcp/firecrawl.json" >/dev/null
-grep -q '"servers"' /tmp/ai-dev-opencode-json.out
+grep -q '"mcp"' /tmp/ai-dev-opencode-json.out
+grep -q '"enabled": true' "$ROOT_DIR/templates/opencode/mcp/context7.json"
 
 AI_DEV_YES=1 AI_DEV_DRY_RUN=1 "$ROOT_DIR/bin/ai-dev" install laravel >/tmp/ai-dev-contract-laravel.out
 grep -q "php" /tmp/ai-dev-contract-laravel.out
@@ -25,7 +26,7 @@ grep -q "laravel" /tmp/ai-dev-contract-laravel.out
 
 AI_DEV_YES=1 AI_DEV_DRY_RUN=1 "$ROOT_DIR/bin/ai-dev" install mcp-github >/tmp/ai-dev-contract-mcp.out
 grep -q "opencode" /tmp/ai-dev-contract-mcp.out
-grep -q "github-cli" /tmp/ai-dev-contract-mcp.out
+! grep -q "github-cli" /tmp/ai-dev-contract-mcp.out
 grep -q "credentials: true" /tmp/ai-dev-contract-mcp.out
 
 AI_DEV_YES=1 AI_DEV_DRY_RUN=1 "$ROOT_DIR/bin/ai-dev" remove postgresql >/tmp/ai-dev-contract-remove.out
@@ -38,9 +39,9 @@ grep -q "Environment:" /tmp/ai-dev-contract-verify.out
 grep -q "Docker" /tmp/ai-dev-contract-doctor.out
 
 "$ROOT_DIR/bin/ai-dev" doctor mcp-github >/tmp/ai-dev-contract-mcp-doctor.out
-grep -q "GitHub MCP" /tmp/ai-dev-contract-mcp-doctor.out
+grep -q "mcp-github" /tmp/ai-dev-contract-mcp-doctor.out
 grep -q "GITHUB_PERSONAL_ACCESS_TOKEN" /tmp/ai-dev-contract-mcp-doctor.out
-grep -q "config fragment" /tmp/ai-dev-contract-mcp-doctor.out
+grep -q "MCP server" /tmp/ai-dev-contract-mcp-doctor.out
 
 if "$ROOT_DIR/bin/ai-dev" verify mcp-github >/tmp/ai-dev-contract-mcp-verify.out 2>&1; then
   if ! grep -q "Environment: READY" /tmp/ai-dev-contract-mcp-verify.out; then
@@ -52,6 +53,52 @@ else
 fi
 
 tmpdir="$(mktemp -d)"
+tmpbin="$tmpdir/bin"
+tmphome="$tmpdir/home"
+mkdir -p "$tmpbin" "$tmphome"
+printf '#!/usr/bin/env bash\nprintf "v20.0.0\\n"\n' >"$tmpbin/node"
+printf '#!/usr/bin/env bash\nexit 0\n' >"$tmpbin/npm"
+printf '#!/usr/bin/env bash\nexit 0\n' >"$tmpbin/npx"
+printf '#!/usr/bin/env bash\nexit 0\n' >"$tmpbin/opencode"
+printf '#!/usr/bin/env bash\nexit 0\n' >"$tmpbin/mise"
+printf '#!/usr/bin/env bash\nexit 0\n' >"$tmpbin/google-chrome"
+chmod +x "$tmpbin/node" "$tmpbin/npm" "$tmpbin/npx" "$tmpbin/opencode" "$tmpbin/mise" "$tmpbin/google-chrome"
+(
+  PATH="$tmpbin:$PATH"
+  HOME="$tmphome"
+  AI_DEV_YES=1
+  GITHUB_PERSONAL_ACCESS_TOKEN=test-token
+  DATABASE_URL=postgresql://user:pass@localhost:5432/app
+  FIRECRAWL_API_KEY=test-key
+  export PATH HOME AI_DEV_YES GITHUB_PERSONAL_ACCESS_TOKEN DATABASE_URL FIRECRAWL_API_KEY
+  "$ROOT_DIR/bin/ai-dev" install mcp-context7 mcp-github mcp-playwright mcp-postgresql mcp-sentry mcp-chrome-devtools mcp-firecrawl >/tmp/ai-dev-contract-mcp-install.out
+)
+test -f "$tmphome/.config/opencode/opencode.json"
+python3 - "$tmphome/.config/opencode/opencode.json" <<'PY'
+import json
+import sys
+
+with open(sys.argv[1], "r", encoding="utf-8") as fh:
+    data = json.load(fh)
+expected = {
+    "context7",
+    "github",
+    "playwright",
+    "postgresql",
+    "sentry",
+    "chrome-devtools",
+    "firecrawl",
+}
+servers = data.get("mcp", {})
+missing = sorted(expected - set(servers))
+if missing:
+    raise SystemExit(f"missing MCP config entries: {missing}")
+for name in expected:
+    if servers[name].get("disabled") is True:
+        raise SystemExit(f"MCP config is disabled: {name}")
+    if servers[name].get("enabled") is not True:
+        raise SystemExit(f"MCP config is not explicitly enabled: {name}")
+PY
 (
   cd "$tmpdir"
   "$ROOT_DIR/bin/ai-dev" new agent-check --stack node --yes >/tmp/ai-dev-contract-agent-new.out

@@ -1,5 +1,5 @@
 {
   "type": "local",
-  "command": ["npx", "-y", "@playwright/mcp"],
-  "disabled": true
+  "command": ["npx", "-y", "@playwright/mcp@latest", "--headless"],
+  "enabled": true
 }

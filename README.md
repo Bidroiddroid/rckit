@@ -62,6 +62,24 @@ bash -c "$(wget -qO- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/r
 
 Profiles are shortcuts. You can always install one component at a time.
 
+## MCPs
+
+MCP components are opt-in. When selected, the installer merges the selected server into:
+
+```bash
+~/.config/opencode/opencode.json -> mcp.<server-name>
+```
+
+Remote MCPs such as Context7, GitHub, and Sentry do not require local `npx`. Local MCPs such as Playwright, PostgreSQL, Chrome DevTools, and Firecrawl use `npx` and require Node.js. MCPs with external credentials read tokens from environment variables instead of tracked files:
+
+```bash
+export GITHUB_PERSONAL_ACCESS_TOKEN=...
+export DATABASE_URL=...
+export FIRECRAWL_API_KEY=...
+```
+
+Run `ai-dev doctor mcp-github mcp-postgresql mcp-firecrawl` after configuring credentials.
+
 ## Safety
 
 The tool shows a plan before changes, keeps MCPs opt-in, avoids writing secrets to tracked files, and preserves Docker volumes and existing configuration unless you explicitly confirm a destructive action.

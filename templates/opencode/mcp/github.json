@@ -1,5 +1,9 @@
 {
-  "type": "local",
-  "command": ["docker", "run", "-i", "--rm", "-e", "GITHUB_PERSONAL_ACCESS_TOKEN", "ghcr.io/github/github-mcp-server"],
-  "disabled": true
+  "type": "remote",
+  "url": "https://api.githubcopilot.com/mcp/",
+  "enabled": true,
+  "headers": {
+    "Authorization": "Bearer {env:GITHUB_PERSONAL_ACCESS_TOKEN}"
+  },
+  "oauth": false
 }

@@ -162,7 +162,7 @@ components:
     context_cost: medium
   mcp-github:
     category: mcp
-    dependencies: [opencode, github-cli]
+    dependencies: [opencode]
     module: modules/mcp/github
     platforms: [ubuntu, debian, wsl2-ubuntu]
     credentials: true
@@ -176,7 +176,7 @@ components:
     context_cost: medium
   mcp-postgresql:
     category: mcp
-    dependencies: [opencode, postgresql]
+    dependencies: [opencode, node]
     module: modules/mcp/postgresql
     platforms: [ubuntu, debian, wsl2-ubuntu]
     credentials: true
@@ -197,7 +197,7 @@ components:
     context_cost: high
   mcp-firecrawl:
     category: mcp
-    dependencies: [opencode]
+    dependencies: [opencode, node]
     module: modules/mcp/firecrawl
     platforms: [ubuntu, debian, wsl2-ubuntu]
     credentials: true

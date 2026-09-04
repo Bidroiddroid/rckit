@@ -26,9 +26,9 @@ These sources were checked before adding the initial AI and MCP module placehold
 - OpenCode v2 currently installs as `opencode2` and does not replace the v1 `opencode` binary.
 - OpenCode v1 permission config uses `permission`; OpenCode v2 uses `permissions` rule arrays. The current template uses conservative v1-compatible approval defaults until the project chooses a target OpenCode major version.
 - OpenCode MCP servers add context and should remain opt-in.
-- GitHub MCP supports remote and local modes; local Docker mode can use `GITHUB_PERSONAL_ACCESS_TOKEN`, which must never be written to tracked files.
+- GitHub MCP is configured in remote mode and reads `GITHUB_PERSONAL_ACCESS_TOKEN` from the environment; tokens must never be written to tracked files.
 - Playwright MCP requires Node.js 20 or newer.
 - Chrome DevTools MCP exposes browser content to the agent and must remain opt-in.
-- Firecrawl MCP requires an API key for hosted/local examples.
+- Firecrawl MCP requires `FIRECRAWL_API_KEY` for local execution.
 - MCP module verification must check the concrete runtime needed by the configured server, not only the presence of OpenCode.
-- MCP config fragments live under `templates/opencode/mcp/` and are disabled by default. Enabling them should remain an explicit user action until a safe merge flow is implemented.
+- MCP config fragments live under `templates/opencode/mcp/` and are merged into `mcp.<server-name>` in the user's OpenCode config only when that MCP is selected.
