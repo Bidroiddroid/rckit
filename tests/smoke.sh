@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+"$ROOT_DIR/bin/ai-dev" list >/tmp/ai-dev-list.out
+grep -q "python" /tmp/ai-dev-list.out
+
+AI_DEV_YES=1 AI_DEV_DRY_RUN=1 "$ROOT_DIR/bin/ai-dev" install python >/tmp/ai-dev-install.out
+grep -q "python" /tmp/ai-dev-install.out
+grep -q "credentials:" /tmp/ai-dev-install.out
+
+AI_DEV_YES=1 AI_DEV_DRY_RUN=1 "$ROOT_DIR/bin/ai-dev" install --profile ai >/tmp/ai-dev-profile.out
+grep -q "opencode" /tmp/ai-dev-profile.out
+grep -q "mcp-github" /tmp/ai-dev-profile.out
+
+"$ROOT_DIR/bin/ai-dev" doctor python >/tmp/ai-dev-doctor.out
+grep -q "AI DEV BOOTSTRAP - DOCTOR" /tmp/ai-dev-doctor.out
+
+if "$ROOT_DIR/bin/ai-dev" unknown >/tmp/ai-dev-unknown.out 2>&1; then
+  echo "unknown command should fail" >&2
+  exit 1
+fi
+grep -q "Unknown command" /tmp/ai-dev-unknown.out
+
+tmpdir="$(mktemp -d)"
+(
+  cd "$tmpdir"
+  "$ROOT_DIR/bin/ai-dev" new sample --stack node --yes >/tmp/ai-dev-new.out
+  test -f sample/AGENTS.md
+  test -f sample/README.md
+  test -f sample/.env.example
+  test -f sample/docker-compose.yml
+  ! grep -R "{{PROJECT_NAME}}" sample
+)
+
+printf 'smoke tests passed\n'

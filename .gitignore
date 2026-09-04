@@ -1,0 +1,7 @@
+.env
+.env.*
+!.env.example
+logs/*.log
+state/installed.yaml
+tmp/
+*.tmp

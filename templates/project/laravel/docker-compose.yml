@@ -1,0 +1,20 @@
+services:
+  app:
+    image: php:8.3-cli
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+    command: ["php", "-v"]
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: app
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app-local-change-me
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-data:

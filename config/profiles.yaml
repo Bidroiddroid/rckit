@@ -1,0 +1,71 @@
+profiles:
+  developer:
+    components:
+      - git
+      - github-cli
+      - make
+      - jq
+      - yq
+      - ripgrep
+      - fd
+      - mise
+  server:
+    components:
+      - docker
+      - compose
+      - traefik
+      - portainer
+      - postgresql
+      - redis
+  fullstack:
+    components:
+      - node
+      - python
+      - php
+      - laravel
+      - docker
+      - compose
+      - postgresql
+      - redis
+  ai:
+    components:
+      - opencode
+      - openspec
+      - mcp-context7
+      - mcp-github
+      - mcp-playwright
+  seo:
+    components:
+      - node
+      - python
+      - mcp-firecrawl
+  full:
+    components:
+      - git
+      - github-cli
+      - make
+      - jq
+      - yq
+      - ripgrep
+      - fd
+      - mise
+      - node
+      - python
+      - php
+      - laravel
+      - docker
+      - compose
+      - postgresql
+      - redis
+      - traefik
+      - portainer
+      - opencode
+      - openspec
+      - mcp-context7
+      - mcp-github
+      - mcp-playwright
+      - mcp-postgresql
+      - mcp-sentry
+      - gitleaks
+      - trivy
+      - semgrep

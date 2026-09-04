@@ -1,0 +1,17 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Make scripts executable
+        run: chmod +x install.sh bin/ai-dev tests/smoke.sh tests/contracts.sh
+      - name: Run smoke tests
+        run: tests/smoke.sh
+      - name: Run contract tests
+        run: tests/contracts.sh

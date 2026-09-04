@@ -1,0 +1,160 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+AI_DEV_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+export AI_DEV_ROOT
+
+source "$AI_DEV_ROOT/lib/logging.sh"
+source "$AI_DEV_ROOT/lib/platform.sh"
+source "$AI_DEV_ROOT/lib/command.sh"
+source "$AI_DEV_ROOT/lib/prompts.sh"
+source "$AI_DEV_ROOT/lib/state.sh"
+source "$AI_DEV_ROOT/lib/security.sh"
+source "$AI_DEV_ROOT/lib/catalog.sh"
+source "$AI_DEV_ROOT/lib/runtime.sh"
+source "$AI_DEV_ROOT/lib/scaffold.sh"
+
+usage() {
+  cat <<'EOF'
+AI DEV BOOTSTRAP
+
+Usage:
+  ai-dev install [component ...] [--profile <name>] [--dry-run] [--yes]
+  ai-dev update [component ...] [--dry-run] [--yes]
+  ai-dev verify [component ...]
+  ai-dev doctor [component ...]
+  ai-dev list
+  ai-dev status
+  ai-dev enable <component>
+  ai-dev disable <component>
+  ai-dev remove <component ...> [--dry-run] [--yes]
+  ai-dev new <name> [--stack node|python|laravel] [--yes]
+  ai-dev reset [--dry-run] [--yes]
+
+Environment:
+  AI_DEV_YES=1       Assume yes for confirmations.
+  AI_DEV_DRY_RUN=1   Print actions without changing host state.
+EOF
+}
+
+parse_common_args() {
+  AI_DEV_ARGS=()
+  AI_DEV_PROFILE=""
+  while (($#)); do
+    case "$1" in
+      --profile)
+        shift
+        AI_DEV_PROFILE="${1:-}"
+        [[ -n "$AI_DEV_PROFILE" ]] || die "--profile requires a value"
+        ;;
+      --profile=*)
+        AI_DEV_PROFILE="${1#--profile=}"
+        ;;
+      --dry-run)
+        export AI_DEV_DRY_RUN=1
+        ;;
+      --yes|-y)
+        export AI_DEV_YES=1
+        ;;
+      --help|-h)
+        usage
+        exit 0
+        ;;
+      *)
+        AI_DEV_ARGS+=("$1")
+        ;;
+    esac
+    shift || true
+  done
+}
+
+run_planned_action() {
+  local action="$1"
+  shift || true
+  parse_common_args "$@"
+  platform_require_supported "$action"
+  catalog_load
+  local -a selected=("${AI_DEV_ARGS[@]}")
+  if [[ ${#selected[@]} -eq 0 && -n "$AI_DEV_PROFILE" ]]; then
+    mapfile -t selected < <(catalog_profile_components "$AI_DEV_PROFILE")
+  elif [[ ${#selected[@]} -eq 0 && "$action" == "install" ]]; then
+    mapfile -t selected < <(prompt_select_components)
+  fi
+  [[ ${#selected[@]} -gt 0 ]] || die "No components selected."
+  mapfile -t AI_DEV_PLAN < <(catalog_resolve "${selected[@]}")
+  plan_render "$action" "${AI_DEV_PLAN[@]}"
+  confirm_plan "$action"
+  runtime_execute_plan "$action" "${AI_DEV_PLAN[@]}"
+}
+
+cmd_list() {
+  catalog_load
+  catalog_list
+}
+
+cmd_status() {
+  catalog_load
+  state_print
+}
+
+cmd_verify() {
+  parse_common_args "$@"
+  catalog_load
+  local -a selected=("${AI_DEV_ARGS[@]}")
+  if [[ ${#selected[@]} -eq 0 ]]; then
+    mapfile -t selected < <(state_installed_components)
+    [[ ${#selected[@]} -gt 0 ]] || mapfile -t selected < <(catalog_all_components)
+  fi
+  runtime_verify "${selected[@]}"
+}
+
+cmd_doctor() {
+  parse_common_args "$@"
+  catalog_load
+  local -a selected=("${AI_DEV_ARGS[@]}")
+  if [[ ${#selected[@]} -eq 0 ]]; then
+    mapfile -t selected < <(catalog_all_components)
+  fi
+  runtime_doctor "${selected[@]}"
+}
+
+cmd_enable() {
+  [[ $# -eq 1 ]] || die "enable requires one component"
+  catalog_load
+  catalog_component_exists "$1"
+  state_set_enabled "$1" "enabled"
+  log_info "Enabled $1"
+}
+
+cmd_disable() {
+  [[ $# -eq 1 ]] || die "disable requires one component"
+  catalog_load
+  catalog_component_exists "$1"
+  state_set_enabled "$1" "disabled"
+  log_info "Disabled $1"
+}
+
+cmd_new() {
+  scaffold_new "$@"
+}
+
+main() {
+  local command="${1:-}"
+  case "$command" in
+    ""|--help|-h|help) usage ;;
+    install) shift; run_planned_action install "$@" ;;
+    update) shift; run_planned_action update "$@" ;;
+    remove) shift; run_planned_action remove "$@" ;;
+    reset) shift; parse_common_args "$@"; plan_render reset; confirm_destructive "reset AI DEV local state"; run_cmd rm -f "$AI_DEV_ROOT/state/installed.yaml" ;;
+    verify) shift; cmd_verify "$@" ;;
+    doctor) shift; cmd_doctor "$@" ;;
+    list) shift; cmd_list "$@" ;;
+    status) shift; cmd_status "$@" ;;
+    enable) shift; cmd_enable "$@" ;;
+    disable) shift; cmd_disable "$@" ;;
+    new) shift; cmd_new "$@" ;;
+    *) usage >&2; die "Unknown command: $command" ;;
+  esac
+}
+
+main "$@"

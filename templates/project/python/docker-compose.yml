@@ -1,0 +1,7 @@
+services:
+  app:
+    image: python:3.12
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+    command: ["python", "-m", "http.server", "8000"]

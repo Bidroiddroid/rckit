@@ -1,0 +1,7 @@
+services:
+  app:
+    image: node:22
+    working_dir: /workspace
+    volumes:
+      - .:/workspace
+    command: ["npm", "run", "dev"]

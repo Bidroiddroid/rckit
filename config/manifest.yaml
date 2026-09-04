@@ -1,0 +1,225 @@
+components:
+  system:
+    category: system
+    dependencies: []
+    module: modules/system
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: false
+    context_cost: low
+  git:
+    category: development
+    dependencies: [system]
+    module: modules/git
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: false
+    context_cost: low
+  github-cli:
+    category: development
+    dependencies: [git]
+    module: modules/github-cli
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: true
+    context_cost: low
+  make:
+    category: development
+    dependencies: [system]
+    module: modules/make
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: false
+    context_cost: low
+  jq:
+    category: development
+    dependencies: [system]
+    module: modules/jq
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: false
+    context_cost: low
+  yq:
+    category: development
+    dependencies: [system]
+    module: modules/yq
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: false
+    context_cost: low
+  ripgrep:
+    category: development
+    dependencies: [system]
+    module: modules/ripgrep
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: false
+    context_cost: low
+  fd:
+    category: development
+    dependencies: [system]
+    module: modules/fd
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: false
+    context_cost: low
+  mise:
+    category: development
+    dependencies: [system]
+    module: modules/mise
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: false
+    context_cost: low
+  node:
+    category: language
+    dependencies: [git, mise]
+    module: modules/node
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: false
+    context_cost: low
+  python:
+    category: language
+    dependencies: [git]
+    module: modules/python
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: false
+    context_cost: low
+  php:
+    category: language
+    dependencies: [git]
+    module: modules/php
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: false
+    context_cost: low
+  laravel:
+    category: framework
+    dependencies: [php]
+    module: modules/laravel
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: false
+    context_cost: low
+  docker:
+    category: infrastructure
+    dependencies: [system]
+    module: modules/docker
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: false
+    context_cost: low
+  compose:
+    category: infrastructure
+    dependencies: [docker]
+    module: modules/compose
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: false
+    context_cost: low
+  postgresql:
+    category: infrastructure
+    dependencies: [compose]
+    module: modules/postgresql
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: false
+    context_cost: low
+  redis:
+    category: infrastructure
+    dependencies: [compose]
+    module: modules/redis
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: false
+    context_cost: low
+  mysql:
+    category: infrastructure
+    dependencies: [compose]
+    module: modules/mysql
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: false
+    context_cost: low
+  traefik:
+    category: infrastructure
+    dependencies: [compose]
+    module: modules/traefik
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: false
+    context_cost: medium
+  portainer:
+    category: infrastructure
+    dependencies: [compose]
+    module: modules/portainer
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: false
+    context_cost: medium
+  opencode:
+    category: ai
+    dependencies: [node, git]
+    module: modules/opencode
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: true
+    context_cost: medium
+  openspec:
+    category: ai
+    dependencies: [git]
+    module: modules/openspec
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: false
+    context_cost: low
+  mcp-context7:
+    category: mcp
+    dependencies: [opencode]
+    module: modules/mcp/context7
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: false
+    context_cost: medium
+  mcp-github:
+    category: mcp
+    dependencies: [opencode, github-cli]
+    module: modules/mcp/github
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: true
+    context_cost: medium
+  mcp-playwright:
+    category: mcp
+    dependencies: [opencode, node]
+    module: modules/mcp/playwright
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: false
+    context_cost: medium
+  mcp-postgresql:
+    category: mcp
+    dependencies: [opencode, postgresql]
+    module: modules/mcp/postgresql
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: true
+    context_cost: medium
+  mcp-sentry:
+    category: mcp
+    dependencies: [opencode]
+    module: modules/mcp/sentry
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: true
+    context_cost: medium
+  mcp-chrome-devtools:
+    category: mcp
+    dependencies: [opencode, node]
+    module: modules/mcp/chrome-devtools
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: false
+    context_cost: high
+  mcp-firecrawl:
+    category: mcp
+    dependencies: [opencode]
+    module: modules/mcp/firecrawl
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: true
+    context_cost: high
+  gitleaks:
+    category: security
+    dependencies: [git]
+    module: modules/security/gitleaks
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: false
+    context_cost: low
+  trivy:
+    category: security
+    dependencies: [docker]
+    module: modules/security/trivy
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: false
+    context_cost: low
+  semgrep:
+    category: security
+    dependencies: [python]
+    module: modules/security/semgrep
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: false
+    context_cost: low
