@@ -37,11 +37,14 @@ if [[ "${1:-}" == "-p" ]]; then printf '22.12.0\n'; else printf 'v22.12.0\n'; fi
 NODE
 cat >"$ASTRO_BIN/npm" <<'NPM'
 #!/usr/bin/env bash
+if [[ "${1:-}" == "--prefix" ]]; then exit 0; fi
 target="${4:-}"
-mkdir -p "$target/src/pages"
+mkdir -p "$target/src/pages" "$target/node_modules/.bin"
 printf '{"name":"remote-astro","dependencies":{"astro":"latest"}}\n' >"$target/package.json"
 printf '<h1>Remote Astro</h1>\n' >"$target/src/pages/index.astro"
 printf '# Astro instructions\n' >"$target/AGENTS.md"
+printf '#!/usr/bin/env bash\nexit 0\n' >"$target/node_modules/.bin/astro"
+chmod +x "$target/node_modules/.bin/astro"
 NPM
 chmod +x "$ASTRO_BIN/node" "$ASTRO_BIN/npm"
 HOME="$TEST_HOME" PATH="$ASTRO_BIN:$PATH" RCKIT_REPO_URL="$SOURCE_REPO" RCKIT_INSTALL_DIR="$INSTALL_DIR" "$ROOT_DIR/remote-install.sh" --new "$PROJECTS/astro-app" --stack astro --yes >/dev/null

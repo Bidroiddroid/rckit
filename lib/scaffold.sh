@@ -84,6 +84,12 @@ scaffold_create_astro() {
   fi
   run_cmd env ASTRO_TELEMETRY_DISABLED=1 npm create astro@latest -- "$target" --template minimal --install --no-git --yes
   [[ -f "$target/package.json" && -f "$target/src/pages/index.astro" ]] || die "Astro generator did not create a valid project in $target"
+  if [[ ! -x "$target/node_modules/.bin/astro" ]]; then
+    log_warn "Astro dependencies were not installed by the generator; retrying npm install"
+    run_cmd env ASTRO_TELEMETRY_DISABLED=1 npm --prefix "$target" install
+  fi
+  [[ -x "$target/node_modules/.bin/astro" ]] || die "Astro dependencies are incomplete in $target"
+  run_cmd env ASTRO_TELEMETRY_DISABLED=1 npm --prefix "$target" run build
   AI_DEV_ASTRO_CREATED=1
 }
 

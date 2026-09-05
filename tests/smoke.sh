@@ -126,11 +126,14 @@ if [[ "${2:-}" == *'% 2'* ]]; then printf '0\n'; elif [[ "${1:-}" == "-p" ]]; th
 NODE
 cat >"$astro_bin/npm" <<'NPM'
 #!/usr/bin/env bash
+if [[ "${1:-}" == "--prefix" ]]; then exit 0; fi
 target="${4:-}"
-mkdir -p "$target/src/pages"
+mkdir -p "$target/src/pages" "$target/node_modules/.bin"
 printf '{"name":"mock-astro","dependencies":{"astro":"latest"}}\n' >"$target/package.json"
 printf '<h1>Astro</h1>\n' >"$target/src/pages/index.astro"
 printf '# Astro instructions\n' >"$target/AGENTS.md"
+printf '#!/usr/bin/env bash\nexit 0\n' >"$target/node_modules/.bin/astro"
+chmod +x "$target/node_modules/.bin/astro"
 NPM
 chmod +x "$astro_bin/node" "$astro_bin/npm"
 (
