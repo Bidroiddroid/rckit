@@ -17,7 +17,7 @@ git -C "$SOURCE_REPO" add .
 git -C "$SOURCE_REPO" commit -qm "integration fixture"
 
 HOME="$TEST_HOME" RCKIT_REPO_URL="$SOURCE_REPO" RCKIT_INSTALL_DIR="$INSTALL_DIR" "$ROOT_DIR/remote-install.sh" --profile developer --dry-run >"$TEST_ROOT/remote.out"
-rg -q 'Dry-run complete; no changes made' "$TEST_ROOT/remote.out"
+grep -q 'Dry-run complete; no changes made' "$TEST_ROOT/remote.out"
 test ! -e "$TEST_HOME/.local/bin/ai-dev"
 
 for stack in node python laravel; do

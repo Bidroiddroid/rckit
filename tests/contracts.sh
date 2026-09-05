@@ -43,7 +43,7 @@ test -f "$ROOT_DIR/skills/code-review/SKILL.md"
 test -f "$ROOT_DIR/.codex/skills/openspec-propose/SKILL.md"
 test -f "$ROOT_DIR/templates/opencode/openspec-core/commands/opsx-apply.md"
 test "$(wc -l <"$ROOT_DIR/templates/openspec/config.yaml")" -gt 200
-if rg -n "ghp_|github_pat_|sk-[A-Za-z0-9]{16}|xox[baprs]-|AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z_-]{35}|postgres://[^{}[:space:]]+:[^{}[:space:]]+@" "$ROOT_DIR/templates/opencode" "$ROOT_DIR/templates/openspec"; then
+if grep -R -n -E "ghp_|github_pat_|sk-[A-Za-z0-9]{16}|xox[baprs]-|AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z_-]{35}|postgres://[^{}[:space:]]+:[^{}[:space:]]+@" "$ROOT_DIR/templates/opencode" "$ROOT_DIR/templates/openspec"; then
   echo "real-looking secret found in templates" >&2
   exit 1
 fi
@@ -83,8 +83,8 @@ state_root="$(mktemp -d)"
   source "$ROOT_DIR/lib/state.sh"
   state_mark git installed 1
   state_mark git updated 2
-  test "$(rg -c '^  git:$' "$state_root/state/installed.yaml")" -eq 1
-  rg -q 'version: "2"' "$state_root/state/installed.yaml"
+  test "$(grep -c '^  git:$' "$state_root/state/installed.yaml")" -eq 1
+  grep -q 'version: "2"' "$state_root/state/installed.yaml"
 )
 
 if "$ROOT_DIR/bin/ai-dev" verify mcp-github >/tmp/ai-dev-contract-mcp-verify.out 2>&1; then

@@ -90,3 +90,9 @@
 - [x] 11.5 Validar criação nova e reparo de projeto antigo incompleto, incluindo execução pelo instalador remoto
 - [x] 11.6 Atualizar README e documentação para listar exatamente os arquivos OpenSpec/OpenCode gerados
 - [x] 11.7 Executar auditoria completa, publicar no GitHub e validar o instalador raw atualizado
+
+## 12. Correção da CI mínima
+
+- [x] 12.1 Remover a dependência de `rg` dos testes executados antes da instalação dos componentes
+- [x] 12.2 Validar audit, contracts, smoke e integration com um PATH mínimo sem ripgrep
+- [ ] 12.3 Publicar a correção e confirmar o novo workflow do GitHub Actions

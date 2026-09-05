@@ -27,3 +27,10 @@ O deploy MUST publicar commits na branch `main` sem sobrescrever histórico remo
 #### Scenario: Release publicada
 - **WHEN** os testes locais e limpos passam e o commit é enviado ao GitHub
 - **THEN** o instalador raw retorna sucesso e o comando público gera o resultado esperado em diretório temporário
+
+### Requirement: Testes independentes dos componentes instalados pelo bootstrap
+A suíte de CI MUST executar em um runner mínimo sem exigir previamente ferramentas opcionais que o próprio rckit oferece como componentes.
+
+#### Scenario: Runner sem ripgrep
+- **WHEN** o job de smoke inicia sem o comando `rg`
+- **THEN** auditoria, contratos e integração executam usando ferramentas base e não falham com `command not found`

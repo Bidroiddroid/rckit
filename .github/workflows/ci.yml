@@ -31,7 +31,7 @@ jobs:
         run: |
           docker run --rm -e DEBIAN_FRONTEND=noninteractive -e TZ=Etc/UTC -v "$PWD:/workspace:ro" "${{ matrix.image }}" bash -lc '
             apt-get update >/dev/null &&
-            apt-get install -y bash git curl python3 ripgrep >/dev/null &&
+            apt-get install -y bash git curl python3 >/dev/null &&
             cd /workspace &&
             bash tests/audit.sh &&
             AI_DEV_DRY_RUN=1 AI_DEV_YES=1 bash bin/ai-dev install --profile developer
