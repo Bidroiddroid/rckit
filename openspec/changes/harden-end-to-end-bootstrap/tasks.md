@@ -95,4 +95,4 @@
 
 - [x] 12.1 Remover a dependência de `rg` dos testes executados antes da instalação dos componentes
 - [x] 12.2 Validar audit, contracts, smoke e integration com um PATH mínimo sem ripgrep
-- [ ] 12.3 Publicar a correção e confirmar o novo workflow do GitHub Actions
+- [x] 12.3 Publicar a correção e confirmar o novo workflow do GitHub Actions
