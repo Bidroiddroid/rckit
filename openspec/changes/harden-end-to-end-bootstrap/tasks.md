@@ -75,8 +75,8 @@
 
 - [x] 10.1 Executar a suíte completa e revisar todos os módulos para confirmar ausência de falso sucesso e placeholders funcionais
 - [x] 10.2 Revisar o diff geral, arquivos gerados, permissões executáveis e histórico remoto antes da publicação
-- [ ] 10.3 Integrar as mudanças ao clone Git gravável e publicar commit na branch `main` do GitHub sem sobrescrever histórico
-- [ ] 10.4 Validar o `remote-install.sh` raw publicado e executar os comandos públicos em diretórios temporários
+- [x] 10.3 Integrar as mudanças ao clone Git gravável e publicar commit na branch `main` do GitHub sem sobrescrever histórico
+- [x] 10.4 Validar o `remote-install.sh` raw publicado e executar os comandos públicos em diretórios temporários
 - [x] 10.5 Validar uma aplicação Node, Python e Laravel gerada, incluindo OpenCode, OpenSpec e MCPs sem credenciais
 - [x] 10.6 Limpar caches e artefatos temporários usados nos testes sem remover configurações, projetos ou volumes do usuário
 - [x] 10.7 Realizar revisão geral do projeto e registrar limitações residuais ou dependências externas ainda não verificáveis
