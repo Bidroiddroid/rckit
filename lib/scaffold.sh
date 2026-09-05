@@ -50,6 +50,9 @@ scaffold_new() {
     scaffold_create_astro "$target"
   fi
   mkdir -p "$target/docs" "$target/tests" "$target/openspec/changes/archive" "$target/openspec/specs" "$target/.opencode/commands" "$target/.opencode/skills"
+  if [[ "${AI_DEV_ASTRO_CREATED:-0}" == "1" && -f "$target/AGENTS.md" ]]; then
+    scaffold_append_agent_instructions "$target/AGENTS.md" "$project_name"
+  fi
   scaffold_write "$target/AGENTS.md" "$AI_DEV_ROOT/templates/project/base/AGENTS.md" "$project_name"
   scaffold_write "$target/README.md" "$AI_DEV_ROOT/templates/project/base/README.md" "$project_name"
   scaffold_write "$target/.env.example" "$AI_DEV_ROOT/templates/project/base/env.example" "$project_name"
@@ -81,6 +84,17 @@ scaffold_create_astro() {
   fi
   run_cmd env ASTRO_TELEMETRY_DISABLED=1 npm create astro@latest -- "$target" --template minimal --install --no-git --yes
   [[ -f "$target/package.json" && -f "$target/src/pages/index.astro" ]] || die "Astro generator did not create a valid project in $target"
+  AI_DEV_ASTRO_CREATED=1
+}
+
+scaffold_append_agent_instructions() {
+  local dest="$1" project_name="$2" rendered
+  grep -q 'AI DEV BOOTSTRAP' "$dest" && return 0
+  rendered="$(mktemp)"
+  sed "s|{{PROJECT_NAME}}|$project_name|g" "$AI_DEV_ROOT/templates/project/base/AGENTS.md" >"$rendered"
+  printf '\n\n---\n\n' >>"$dest"
+  cat "$rendered" >>"$dest"
+  rm -f "$rendered"
 }
 
 scaffold_migrate_opencode_config() {

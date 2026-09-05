@@ -130,6 +130,7 @@ target="${4:-}"
 mkdir -p "$target/src/pages"
 printf '{"name":"mock-astro","dependencies":{"astro":"latest"}}\n' >"$target/package.json"
 printf '<h1>Astro</h1>\n' >"$target/src/pages/index.astro"
+printf '# Astro instructions\n' >"$target/AGENTS.md"
 NPM
 chmod +x "$astro_bin/node" "$astro_bin/npm"
 (
@@ -138,6 +139,8 @@ chmod +x "$astro_bin/node" "$astro_bin/npm"
   test -f astro-app/package.json
   test -f astro-app/src/pages/index.astro
   test -f astro-app/AGENTS.md
+  grep -q 'AI DEV BOOTSTRAP' astro-app/AGENTS.md
+  grep -q 'Astro instructions' astro-app/AGENTS.md
   test -f astro-app/opencode.json
   test -f astro-app/openspec/config.yaml
   original="$(sha256sum astro-app/package.json)"
