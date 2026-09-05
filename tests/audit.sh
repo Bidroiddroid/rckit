@@ -17,6 +17,7 @@ for name in context7 github playwright postgresql sentry chrome-devtools firecra
   python3 -m json.tool "$ROOT_DIR/templates/opencode/mcp/$name.json" >/dev/null
 done
 python3 -m json.tool "$ROOT_DIR/templates/opencode/opencode.json" >/dev/null
+"$ROOT_DIR/tests/openspec-parity.sh"
 rg -q 'opencode.json.*raiz' "$ROOT_DIR/README.md"
 rg -q '@fission-ai/openspec@latest' "$ROOT_DIR/modules/openspec/module.sh"
 rg -q 'npm install -g opencode-ai' "$ROOT_DIR/modules/opencode/module.sh"

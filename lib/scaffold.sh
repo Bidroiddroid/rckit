@@ -37,7 +37,7 @@ scaffold_new() {
   if [[ -e "$target" ]]; then
     confirm "Project path exists. Write missing files into $target?" || die "Project creation cancelled"
   fi
-  mkdir -p "$target/docs" "$target/tests" "$target/openspec/changes" "$target/openspec/specs" "$target/.opencode/skills"
+  mkdir -p "$target/docs" "$target/tests" "$target/openspec/changes/archive" "$target/openspec/specs" "$target/.opencode/commands" "$target/.opencode/skills"
   scaffold_write "$target/AGENTS.md" "$AI_DEV_ROOT/templates/project/base/AGENTS.md" "$project_name"
   scaffold_write "$target/README.md" "$AI_DEV_ROOT/templates/project/base/README.md" "$project_name"
   scaffold_write "$target/.env.example" "$AI_DEV_ROOT/templates/project/base/env.example" "$project_name"
@@ -48,6 +48,8 @@ scaffold_new() {
   scaffold_write "$target/openspec/config.yaml" "$AI_DEV_ROOT/templates/openspec/config.yaml" "$project_name"
   scaffold_copy_tree "$target/.opencode/skills" "$AI_DEV_ROOT/skills" "$project_name"
   scaffold_copy_openspec_skills "$target/.opencode/skills"
+  scaffold_copy_tree "$target/.opencode/skills" "$AI_DEV_ROOT/templates/opencode/openspec-core/skills" "$project_name" "replace-openspec"
+  scaffold_copy_tree "$target/.opencode/commands" "$AI_DEV_ROOT/templates/opencode/openspec-core/commands" "$project_name"
   scaffold_copy_tree "$target/openspec" "$AI_DEV_ROOT/templates/openspec" "$project_name"
   log_info "Created project scaffold: $target ($stack, project: $project_name)"
 }
@@ -67,6 +69,9 @@ scaffold_copy_openspec_skills() {
   for skill in "$src"/openspec-*; do
     [[ -d "$skill" ]] || continue
     name="$(basename "$skill")"
+    case "$name" in
+      openspec-propose|openspec-explore|openspec-apply-change|openspec-archive-change) continue ;;
+    esac
     scaffold_copy_tree "$dest/$name" "$skill" ""
   done
 }
@@ -109,13 +114,21 @@ scaffold_write() {
 }
 
 scaffold_copy_tree() {
-  local dest_dir="$1" src_dir="$2" project_name="$3"
+  local dest_dir="$1" src_dir="$2" project_name="$3" mode="${4:-preserve}"
   local src rel dest
   [[ -d "$src_dir" ]] || return 0
   while IFS= read -r src; do
     rel="${src#"$src_dir"/}"
     [[ "$rel" == "config.yaml" ]] && continue
     dest="$dest_dir/$rel"
+    if [[ "$mode" == "replace-openspec" && -f "$dest" && "$dest" == */openspec-*/SKILL.md ]]; then
+      if ! cmp -s "$src" "$dest"; then
+        cp "$dest" "$dest.old.$(date +%Y%m%d%H%M%S)"
+        log_warn "Backed up non-official OpenSpec skill: $dest"
+        cp "$src" "$dest"
+      fi
+      continue
+    fi
     scaffold_write "$dest" "$src" "$project_name"
   done < <(find "$src_dir" -type f | sort)
 }

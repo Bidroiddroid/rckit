@@ -40,7 +40,9 @@ wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-instal
 
 Stacks disponíveis: `node`, `python` e `laravel`. Arquivos personalizados são preservados. Configurações antigas reconhecidas recebem backup `.old.<data>` antes da regeneração.
 
-O projeto inclui `AGENTS.md`, `opencode.json` na raiz, skills em `.opencode/skills/`, `openspec/config.yaml`, `openspec/changes/`, `openspec/specs/`, README, `.env.example`, `.gitignore`, testes e Compose da stack.
+O projeto inclui `AGENTS.md`, `opencode.json` na raiz, skills em `.opencode/skills/`, comandos oficiais em `.opencode/commands/`, `openspec/config.yaml`, `openspec/changes/archive/`, `openspec/specs/`, README, `.env.example`, `.gitignore`, testes e Compose da stack.
+
+Para OpenCode, o scaffold instala o conjunto oficial core do OpenSpec com entrega `both`: `openspec-propose`, `openspec-explore`, `openspec-apply-change`, `openspec-archive-change` e os comandos correspondentes `opsx-propose`, `opsx-explore`, `opsx-apply` e `opsx-archive`. As skills adicionais do fluxo expandido também permanecem disponíveis.
 
 ## Comando local
 

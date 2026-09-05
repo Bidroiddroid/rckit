@@ -36,12 +36,14 @@ grep -q "specs:" "$ROOT_DIR/templates/openspec/config.yaml"
 grep -q "tasks:" "$ROOT_DIR/templates/openspec/config.yaml"
 test -f "$ROOT_DIR/templates/openspec/README.md"
 test -f "$ROOT_DIR/templates/openspec/changes/.gitkeep"
+test -f "$ROOT_DIR/templates/openspec/changes/archive/.gitkeep"
 test -f "$ROOT_DIR/templates/openspec/specs/.gitkeep"
 test -f "$ROOT_DIR/skills/code-review/SKILL.md"
   test -f "$ROOT_DIR/skills/mcp-setup/SKILL.md"
 test -f "$ROOT_DIR/.codex/skills/openspec-propose/SKILL.md"
+test -f "$ROOT_DIR/templates/opencode/openspec-core/commands/opsx-apply.md"
 test "$(wc -l <"$ROOT_DIR/templates/openspec/config.yaml")" -gt 200
-if rg -n "ghp_|github_pat_|sk-[A-Za-z0-9]|xox[baprs]-|AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z_-]{35}|postgres://[^{}[:space:]]+:[^{}[:space:]]+@" "$ROOT_DIR/templates/opencode" "$ROOT_DIR/templates/openspec"; then
+if rg -n "ghp_|github_pat_|sk-[A-Za-z0-9]{16}|xox[baprs]-|AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z_-]{35}|postgres://[^{}[:space:]]+:[^{}[:space:]]+@" "$ROOT_DIR/templates/opencode" "$ROOT_DIR/templates/openspec"; then
   echo "real-looking secret found in templates" >&2
   exit 1
 fi

@@ -43,10 +43,17 @@ tmpdir="$(mktemp -d)"
   test -f sample/.env.example
   test -f sample/docker-compose.yml
   test -d sample/openspec/changes
+  test -d sample/openspec/changes/archive
   test -d sample/openspec/specs
   test -f sample/openspec/README.md
   test -f sample/.opencode/skills/code-review/SKILL.md
   test -f sample/.opencode/skills/mcp-setup/SKILL.md
+  test -f sample/.opencode/skills/openspec-apply-change/SKILL.md
+  test -f sample/.opencode/commands/opsx-propose.md
+  test -f sample/.opencode/commands/opsx-explore.md
+  test -f sample/.opencode/commands/opsx-apply.md
+  test -f sample/.opencode/commands/opsx-archive.md
+  cmp "$ROOT_DIR/templates/opencode/openspec-core/skills/openspec-propose/SKILL.md" sample/.opencode/skills/openspec-propose/SKILL.md
   python3 -m json.tool sample/opencode.json >/tmp/ai-dev-sample-opencode-json.out
   grep -q '"agent"' /tmp/ai-dev-sample-opencode-json.out
   grep -q '"mcp"' /tmp/ai-dev-sample-opencode-json.out
@@ -72,10 +79,12 @@ tmpdir="$(mktemp -d)"
   test -f README.md
   test -f openspec/config.yaml
   test -d openspec/changes
+  test -d openspec/changes/archive
   test -d openspec/specs
   test -f openspec/README.md
   test -f .opencode/skills/code-review/SKILL.md
   test -f .opencode/skills/openspec-propose/SKILL.md
+  test -f .opencode/commands/opsx-apply.md
   test -f opencode.json
   grep -q "current-project" README.md
   grep -q "current-project" openspec/config.yaml
@@ -84,13 +93,19 @@ tmpdir="$(mktemp -d)"
   cd "$tmpdir"
   mkdir legacy-project
   cd legacy-project
-  mkdir -p openspec .opencode
+  mkdir -p openspec .opencode/commands .opencode/skills/openspec-propose
   printf 'version: 1\nproject: legacy-project\n' >openspec/config.yaml
   printf '{"mcp":{}}\n' >.opencode/opencode.json
+  printf 'custom command\n' >.opencode/commands/custom.md
+  printf 'legacy skill\n' >.opencode/skills/openspec-propose/SKILL.md
   "$ROOT_DIR/bin/ai-dev" new . --stack node --yes >/tmp/ai-dev-new-legacy.out
   test -f openspec/config.yaml.old.*
   test -f opencode.json
   test -f .opencode/opencode.json
+  test -f .opencode/commands/custom.md
+  test -f .opencode/commands/opsx-propose.md
+  test -f .opencode/skills/openspec-propose/SKILL.md.old.*
+  cmp "$ROOT_DIR/templates/opencode/openspec-core/skills/openspec-propose/SKILL.md" .opencode/skills/openspec-propose/SKILL.md
   grep -q "Conhecimento caro" openspec/config.yaml
   grep -q '"mcp"' opencode.json
 )

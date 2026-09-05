@@ -25,6 +25,8 @@ for stack in node python laravel; do
   test -f "$PROJECTS/$stack-app/opencode.json"
   test -f "$PROJECTS/$stack-app/openspec/config.yaml"
   test -f "$PROJECTS/$stack-app/.opencode/skills/openspec-apply-change/SKILL.md"
+  test -f "$PROJECTS/$stack-app/.opencode/commands/opsx-propose.md"
+  test -d "$PROJECTS/$stack-app/openspec/changes/archive"
 done
 test -L "$TEST_HOME/.local/bin/ai-dev"
 HOME="$TEST_HOME" "$TEST_HOME/.local/bin/ai-dev" new "$PROJECTS/idempotent" --stack node --yes >/dev/null
