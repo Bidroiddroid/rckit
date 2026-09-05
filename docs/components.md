@@ -11,3 +11,8 @@ Para adicionar um componente:
 5. Adicione testes de resolução, dry-run, idempotência, falha e verificação específica.
 
 Operações sem implementação não podem retornar sucesso. A presença de uma dependência, como Docker, não comprova que PostgreSQL ou outro serviço foi configurado.
+
+## Astro e agent skills
+
+- `astro` valida o runtime oficial (Node.js 22.12.0+ em versão par suportada). O framework é instalado localmente por `ai-dev new <nome> --stack astro`.
+- `agent-skills` instala `vercel-labs/agent-skills` no projeto atual pelo CLI skills.sh. É opt-in, não exige credencial para o repositório público e tem custo de contexto alto.

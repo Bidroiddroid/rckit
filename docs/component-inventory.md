@@ -7,10 +7,12 @@ Este arquivo define o resultado verificável de cada opção publicada. `host` i
 | system | host | plataforma existente | Ubuntu/Debian/WSL2 Ubuntu |
 | git, github-cli, make, jq, yq, ripgrep, fd | host | apt | comando específico; GitHub auth no doctor |
 | mise | host | instalador oficial mise.run | `mise --version`/`mise doctor` |
-| node | host | mise `node@22` | Node >=20.19, npm, pnpm e tsc |
+| node | host | mise `node@22` | Node >=22.12 em versão par, npm, pnpm e tsc |
 | python | host | apt + uv oficial | python3, pip3, uv e Ruff |
 | php | host | apt | PHP e Composer |
 | laravel | host | Composer global | comando `laravel` |
+| astro | framework/projeto | `npm create astro@latest` | Node compatível; `package.json` e `src/pages/index.astro` no projeto gerado |
+| agent-skills | integração IA de projeto | `npx skills add vercel-labs/agent-skills` | fonte em `skills-lock.json` e `.agents/skills/*/SKILL.md` |
 | docker, compose | host | apt | daemon Docker e `docker compose version` |
 | postgresql, redis, mysql, traefik, portainer | service | template Compose local | arquivo próprio aceito por `docker compose config` |
 | opencode | host | npm `opencode-ai` estável | comando `opencode` e JSON no doctor |

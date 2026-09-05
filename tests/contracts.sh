@@ -8,6 +8,16 @@ bash -n "$ROOT_DIR/install.sh" "$ROOT_DIR/bin/ai-dev" "$ROOT_DIR"/lib/*.sh "$ROO
 "$ROOT_DIR/bin/ai-dev" list >/tmp/ai-dev-contract-list.out
 grep -q "mcp-github" /tmp/ai-dev-contract-list.out
 grep -q "semgrep" /tmp/ai-dev-contract-list.out
+grep -q "astro" /tmp/ai-dev-contract-list.out
+grep -q "agent-skills" /tmp/ai-dev-contract-list.out
+grep -q 'dependencies: \[node\]' "$ROOT_DIR/config/manifest.yaml"
+grep -A6 '^  agent-skills:' "$ROOT_DIR/config/manifest.yaml" | grep -q 'dependencies: \[git, node\]'
+grep -A6 '^  agent-skills:' "$ROOT_DIR/config/manifest.yaml" | grep -q 'credentials: false'
+grep -A6 '^  agent-skills:' "$ROOT_DIR/config/manifest.yaml" | grep -q 'context_cost: high'
+! grep -A40 '^  ai:' "$ROOT_DIR/config/profiles.yaml" | grep -q -- '- agent-skills'
+grep -q '22.12.0' "$ROOT_DIR/modules/node/module.sh"
+grep -q 'npm create astro@latest' "$ROOT_DIR/lib/scaffold.sh"
+grep -q 'vercel-labs/agent-skills' "$ROOT_DIR/modules/agent-skills/module.sh"
 
 tmpbin_fd="$(mktemp -d)"
 printf '#!/usr/bin/env bash\nexit 0\n' >"$tmpbin_fd/fdfind"
@@ -51,6 +61,12 @@ fi
 AI_DEV_YES=1 AI_DEV_DRY_RUN=1 "$ROOT_DIR/bin/ai-dev" install laravel >/tmp/ai-dev-contract-laravel.out
 grep -q "php" /tmp/ai-dev-contract-laravel.out
 grep -q "laravel" /tmp/ai-dev-contract-laravel.out
+
+AI_DEV_YES=1 AI_DEV_DRY_RUN=1 "$ROOT_DIR/bin/ai-dev" install agent-skills >/tmp/ai-dev-contract-skills.out
+grep -q 'source: https://github.com/vercel-labs/agent-skills' /tmp/ai-dev-contract-skills.out
+grep -q 'context: high' /tmp/ai-dev-contract-skills.out
+grep -q 'credentials: false' /tmp/ai-dev-contract-skills.out
+grep -q 'node' /tmp/ai-dev-contract-skills.out
 
 AI_DEV_YES=1 AI_DEV_DRY_RUN=1 "$ROOT_DIR/bin/ai-dev" install mcp-github >/tmp/ai-dev-contract-mcp.out
 grep -q "opencode" /tmp/ai-dev-contract-mcp.out
@@ -100,7 +116,16 @@ tmpdir="$(mktemp -d)"
 tmpbin="$tmpdir/bin"
 tmphome="$tmpdir/home"
 mkdir -p "$tmpbin" "$tmphome"
-printf '#!/usr/bin/env bash\nif [[ "${1:-}" == "-p" ]]; then printf "20.19.0\\n"; else printf "v20.19.0\\n"; fi\n' >"$tmpbin/node"
+cat >"$tmpbin/node" <<'NODE'
+#!/usr/bin/env bash
+if [[ "${2:-}" == *'% 2'* ]]; then
+  printf '0\n'
+elif [[ "${1:-}" == "-p" ]]; then
+  printf '22.12.0\n'
+else
+  printf 'v22.12.0\n'
+fi
+NODE
 printf '#!/usr/bin/env bash\nexit 0\n' >"$tmpbin/npm"
 printf '#!/usr/bin/env bash\nexit 0\n' >"$tmpbin/npx"
 printf '#!/usr/bin/env bash\nexit 0\n' >"$tmpbin/pnpm"

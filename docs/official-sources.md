@@ -1,6 +1,6 @@
 # Official Sources
 
-Estas fontes oficiais foram revisadas em 2026-09-04. Instaladores e schemas externos podem mudar e devem ser conferidos antes de alterar os módulos.
+Estas fontes oficiais foram revisadas em 2026-09-05. Instaladores e schemas externos podem mudar e devem ser conferidos antes de alterar os módulos.
 
 - OpenCode estável: https://opencode.ai/en/docs (instalação `npm install -g opencode-ai`, binário `opencode`). A configuração desta versão mantém servidores diretamente em `mcp`. OpenCode v2 permanece beta, instala `opencode2` e usa `mcp.servers`; os schemas não são misturados.
 - OpenSpec: https://github.com/Fission-AI/OpenSpec/blob/main/docs/installation.md (`npm install -g @fission-ai/openspec@latest`, Node.js 20.19.0+).
@@ -8,6 +8,8 @@ Estas fontes oficiais foram revisadas em 2026-09-04. Instaladores e schemas exte
 - uv/Ruff: https://docs.astral.sh/uv/getting-started/installation/ e https://docs.astral.sh/ruff/installation/.
 - Docker Engine: https://docs.docker.com/engine/install/ e Compose: https://docs.docker.com/compose/install/linux/.
 - Gitleaks: https://github.com/gitleaks/gitleaks; Trivy: https://trivy.dev/latest/getting-started/installation/; Semgrep: https://semgrep.dev/docs/getting-started/.
+- Astro: https://docs.astro.build/en/install-and-setup/ (`npm create astro@latest`; Node.js 22.12.0+ em versão par suportada; instalação local no projeto).
+- skills.sh CLI: https://github.com/vercel-labs/skills (`npx skills`) e coleção Vercel: https://github.com/vercel-labs/agent-skills (`npx skills add vercel-labs/agent-skills`). skills.sh é o diretório/ecossistema, não uma skill individual.
 
 ## AI Tooling
 

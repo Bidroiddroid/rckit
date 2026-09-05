@@ -28,6 +28,26 @@ for stack in node python laravel; do
   test -f "$PROJECTS/$stack-app/.opencode/commands/opsx-propose.md"
   test -d "$PROJECTS/$stack-app/openspec/changes/archive"
 done
+
+ASTRO_BIN="$TEST_ROOT/astro-bin"
+mkdir -p "$ASTRO_BIN"
+cat >"$ASTRO_BIN/node" <<'NODE'
+#!/usr/bin/env bash
+if [[ "${1:-}" == "-p" ]]; then printf '22.12.0\n'; else printf 'v22.12.0\n'; fi
+NODE
+cat >"$ASTRO_BIN/npm" <<'NPM'
+#!/usr/bin/env bash
+target="${4:-}"
+mkdir -p "$target/src/pages"
+printf '{"name":"remote-astro","dependencies":{"astro":"latest"}}\n' >"$target/package.json"
+printf '<h1>Remote Astro</h1>\n' >"$target/src/pages/index.astro"
+NPM
+chmod +x "$ASTRO_BIN/node" "$ASTRO_BIN/npm"
+HOME="$TEST_HOME" PATH="$ASTRO_BIN:$PATH" RCKIT_REPO_URL="$SOURCE_REPO" RCKIT_INSTALL_DIR="$INSTALL_DIR" "$ROOT_DIR/remote-install.sh" --new "$PROJECTS/astro-app" --stack astro --yes >/dev/null
+test -f "$PROJECTS/astro-app/package.json"
+test -f "$PROJECTS/astro-app/src/pages/index.astro"
+test -f "$PROJECTS/astro-app/opencode.json"
+test -f "$PROJECTS/astro-app/openspec/config.yaml"
 test -L "$TEST_HOME/.local/bin/ai-dev"
 HOME="$TEST_HOME" "$TEST_HOME/.local/bin/ai-dev" new "$PROJECTS/idempotent" --stack node --yes >/dev/null
 before="$(sha256sum "$PROJECTS/idempotent/README.md")"

@@ -90,6 +90,20 @@ components:
     platforms: [ubuntu, debian, wsl2-ubuntu]
     credentials: false
     context_cost: low
+  astro:
+    category: framework
+    dependencies: [node]
+    module: modules/astro
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: false
+    context_cost: low
+  agent-skills:
+    category: ai
+    dependencies: [git, node]
+    module: modules/agent-skills
+    platforms: [ubuntu, debian, wsl2-ubuntu]
+    credentials: false
+    context_cost: high
   docker:
     category: infrastructure
     dependencies: [system]

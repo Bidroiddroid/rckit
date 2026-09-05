@@ -32,7 +32,7 @@ Usage:
   ai-dev enable <component>
   ai-dev disable <component>
   ai-dev remove <component ...> [--dry-run] [--yes]
-  ai-dev new <name> [--stack node|python|laravel] [--yes]
+  ai-dev new <name> [--stack node|python|laravel|astro] [--dry-run] [--yes]
   ai-dev reset [--dry-run] [--yes]
 
 Environment:

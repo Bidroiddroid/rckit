@@ -38,7 +38,26 @@ Criar ou completar os arquivos dentro da pasta atual:
 wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh | bash -s -- --new . --stack node
 ```
 
-Stacks disponíveis: `node`, `python` e `laravel`. Arquivos personalizados são preservados. Configurações antigas reconhecidas recebem backup `.old.<data>` antes da regeneração.
+Stacks disponíveis: `node`, `python`, `laravel` e `astro`. Astro usa o gerador oficial e requer Node.js 22.12.0 ou superior em uma versão par suportada. Arquivos personalizados são preservados. Configurações antigas reconhecidas recebem backup `.old.<data>` antes da regeneração.
+
+Criar um projeto Astro com um comando:
+
+```bash
+wget -O- https://raw.githubusercontent.com/Bidroiddroid/rckit/main/remote-install.sh | bash -s -- --new meu-site --stack astro
+```
+
+Acrescente `--dry-run` para revisar sem baixar ou criar arquivos.
+
+## Agent skills
+
+Dentro da raiz de um projeto, instale explicitamente a coleção oficial da Vercel:
+
+```bash
+ai-dev install agent-skills --dry-run
+ai-dev install agent-skills
+```
+
+O componente usa o CLI do ecossistema skills.sh para instalar `vercel-labs/agent-skills` no projeto, com telemetria desativada pelo rckit. Ele não exige credenciais para o repositório público, tem custo de contexto alto e não pertence aos perfis padrão. Skills próprias são preservadas; update e remoção dependem do lock oficial para evitar apagar arquivos de propriedade ambígua.
 
 O projeto inclui `AGENTS.md`, `opencode.json` na raiz, skills em `.opencode/skills/`, comandos oficiais em `.opencode/commands/`, `openspec/config.yaml`, `openspec/changes/archive/`, `openspec/specs/`, README, `.env.example`, `.gitignore`, testes e Compose da stack.
 

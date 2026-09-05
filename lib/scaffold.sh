@@ -15,8 +15,11 @@ scaffold_new() {
         export AI_DEV_YES=1
         ;;
       --help|-h)
-        printf 'Usage: ai-dev new <name> [--stack node|python|laravel]\n'
+        printf 'Usage: ai-dev new <name> [--stack node|python|laravel|astro] [--dry-run]\n'
         return 0
+        ;;
+      --dry-run)
+        export AI_DEV_DRY_RUN=1
         ;;
       *)
         [[ -z "$name" ]] || die "Unexpected argument: $1"
@@ -26,7 +29,7 @@ scaffold_new() {
     shift || true
   done
   [[ -n "$name" ]] || die "new requires a project name"
-  [[ "$stack" == "node" || "$stack" == "python" || "$stack" == "laravel" ]] || die "Unsupported stack: $stack"
+  [[ "$stack" == "node" || "$stack" == "python" || "$stack" == "laravel" || "$stack" == "astro" ]] || die "Unsupported stack: $stack"
   if [[ "$name" == "." ]]; then
     target="."
     project_name="$(basename "$PWD")"
@@ -34,8 +37,17 @@ scaffold_new() {
     target="$name"
     project_name="$(basename "$name")"
   fi
+  if [[ "${AI_DEV_DRY_RUN:-0}" == "1" ]]; then
+    printf 'AI DEV BOOTSTRAP PROJECT PLAN\nStack: %s\nProject: %s\nTarget: %s\n' "$stack" "$project_name" "$target"
+    [[ "$stack" == "astro" ]] && printf 'DRY-RUN: env ASTRO_TELEMETRY_DISABLED=1 npm create astro@latest -- %q --template minimal --install --no-git --yes\n' "$target"
+    printf 'DRY-RUN: apply AI DEV BOOTSTRAP, OpenCode and OpenSpec files without overwriting existing files\n'
+    return 0
+  fi
   if [[ -e "$target" ]]; then
     confirm "Project path exists. Write missing files into $target?" || die "Project creation cancelled"
+  fi
+  if [[ "$stack" == "astro" ]]; then
+    scaffold_create_astro "$target"
   fi
   mkdir -p "$target/docs" "$target/tests" "$target/openspec/changes/archive" "$target/openspec/specs" "$target/.opencode/commands" "$target/.opencode/skills"
   scaffold_write "$target/AGENTS.md" "$AI_DEV_ROOT/templates/project/base/AGENTS.md" "$project_name"
@@ -52,6 +64,23 @@ scaffold_new() {
   scaffold_copy_tree "$target/.opencode/commands" "$AI_DEV_ROOT/templates/opencode/openspec-core/commands" "$project_name"
   scaffold_copy_tree "$target/openspec" "$AI_DEV_ROOT/templates/openspec" "$project_name"
   log_info "Created project scaffold: $target ($stack, project: $project_name)"
+}
+
+scaffold_create_astro() {
+  local target="$1" version major
+  require_command node
+  require_command npm
+  version="$(node -p 'process.versions.node')"
+  major="${version%%.*}"
+  version_at_least "$version" "22.12.0" || die "Astro requires Node.js 22.12.0 or newer"
+  ((major % 2 == 0)) || die "Astro requires an even supported Node.js release"
+  if [[ -e "$target" ]] && find "$target" -mindepth 1 -maxdepth 1 -print -quit | grep -q .; then
+    [[ -f "$target/package.json" && -d "$target/src" ]] || die "Astro requires an empty target or an existing Astro project; existing files were preserved"
+    grep -q '"astro"' "$target/package.json" || die "Existing package.json is not an Astro project; existing files were preserved"
+    return 0
+  fi
+  run_cmd env ASTRO_TELEMETRY_DISABLED=1 npm create astro@latest -- "$target" --template minimal --install --no-git --yes
+  [[ -f "$target/package.json" && -f "$target/src/pages/index.astro" ]] || die "Astro generator did not create a valid project in $target"
 }
 
 scaffold_migrate_opencode_config() {

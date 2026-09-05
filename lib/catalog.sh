@@ -137,6 +137,9 @@ plan_render() {
       "$(catalog_category_for "$component")" \
       "$(catalog_credentials_for "$component")" \
       "$(catalog_context_cost_for "$component")"
+    if [[ "$component" == "agent-skills" ]]; then
+      printf '    source: https://github.com/vercel-labs/agent-skills (skills.sh CLI, project scope)\n'
+    fi
   done
   if [[ "$action" == "remove" || "$action" == "reset" ]]; then
     printf 'Destructive guard: explicit confirmation required before deleting state, configuration, services, or data.\n'
