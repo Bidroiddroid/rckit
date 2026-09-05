@@ -89,4 +89,4 @@
 - [x] 11.4 Adicionar teste de paridade estrutural e de conteúdo com a saída oficial da CLI OpenSpec suportada
 - [x] 11.5 Validar criação nova e reparo de projeto antigo incompleto, incluindo execução pelo instalador remoto
 - [x] 11.6 Atualizar README e documentação para listar exatamente os arquivos OpenSpec/OpenCode gerados
-- [ ] 11.7 Executar auditoria completa, publicar no GitHub e validar o instalador raw atualizado
+- [x] 11.7 Executar auditoria completa, publicar no GitHub e validar o instalador raw atualizado
