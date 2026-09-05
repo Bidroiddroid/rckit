@@ -41,7 +41,7 @@
 
 - [x] 6.1 Revisar diff, permissões executáveis, segurança de supply chain, compatibilidade das stacks antigas e ausência de dados locais
 - [x] 6.2 Publicar a mudança na branch `main` sem sobrescrever o histórico remoto
-- [ ] 6.3 Validar o instalador raw publicado, a seleção de `agent-skills` e a criação de uma aplicação Astro funcional
-- [ ] 6.4 Confirmar GitHub Actions e validar a aplicação Astro gerada com instalação e build bem-sucedidos
-- [ ] 6.5 Limpar caches e artefatos temporários dos testes sem remover projetos ou configurações do usuário
-- [ ] 6.6 Realizar revisão geral e registrar limitações residuais de serviços externos e conteúdo de terceiros
+- [x] 6.3 Validar o instalador raw publicado, a seleção de `agent-skills` e a criação de uma aplicação Astro funcional
+- [x] 6.4 Confirmar GitHub Actions e validar a aplicação Astro gerada com instalação e build bem-sucedidos
+- [x] 6.5 Limpar caches e artefatos temporários dos testes sem remover projetos ou configurações do usuário
+- [x] 6.6 Realizar revisão geral e registrar limitações residuais de serviços externos e conteúdo de terceiros
